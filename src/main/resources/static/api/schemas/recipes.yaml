@@ -8,12 +8,9 @@ recipe:
     createdAt:
       type: string
     items:
-      $ref: "#/recipeItemArray"
-
-recipeItemArray:
-  type: array
-  items:
-    $ref: "#/recipeItem"
+      type: array
+      items:
+        $ref: "#/recipeItem"
 
 recipeItem:
   type: object

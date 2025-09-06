@@ -8,12 +8,9 @@ shoppingList:
     createdAt:
       type: string
     itemsPerCategory:
-      $ref: "#/categorizedItemArray"
-
-categorizedItemArray:
-  type: array
-  items:
-    $ref: "#/categorizedItem"
+      type: array
+      items:
+        $ref: "#/categorizedItem"
 
 categorizedItem:
   type: object
@@ -21,7 +18,9 @@ categorizedItem:
     category:
       type: string
     items:
-      $ref: "#/shoppingListItem"
+      type: array
+      items:
+        $ref: "#/shoppingListItem"
 
 shoppingListItem:
   type: object
