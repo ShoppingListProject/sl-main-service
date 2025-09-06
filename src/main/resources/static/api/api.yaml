@@ -1,0 +1,33 @@
+openapi: 3.1.0
+info:
+  title: Shopping List Main Service
+  version: 1.0.0
+
+paths:
+
+  /shoppingLists/{userId}:
+    $ref: "paths/shoppingLists.yaml#/shoppingListsForUser"
+#
+#  /recipes/{userId}:
+#    $ref: "./paths/recipes.yaml#recipes/{userId}"
+#
+#  /units:
+#    $ref: "./paths/units.yaml#units"
+#
+#  /categories:
+#    $ref: "./paths/categories.yaml#categories"
+#
+components:
+  schemas:
+
+    shoppingList:
+      $ref: "schemas/shoppingList.yaml#/shoppingList"
+#    recipe:
+#      $ref: "./schemas/recipe.yaml"
+
+  responses:
+    forbidden:
+      $ref: "responses/responses.yaml#/forbidden"
+    notFound:
+      $ref: "responses/responses.yaml#/notFound"
+

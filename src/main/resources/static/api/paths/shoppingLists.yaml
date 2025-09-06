@@ -1,0 +1,20 @@
+shoppingListsForUser:
+  get:
+    summary: "Retrieve all shopping lists for user."
+    description: "Retrieve all shopping lists that were created by specified user."
+    responses:
+
+      "200":
+        description: "Everything went fine"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../api.yaml#/components/schemas/shoppingList"
+
+      "403":
+        $ref: "../api.yaml#/components/responses/forbidden"
+
+      "404":
+        $ref: "../api.yaml#/components/responses/notFound"

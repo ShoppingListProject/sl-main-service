@@ -1,0 +1,36 @@
+shoppingList:
+  type: object
+  properties:
+    name:
+      type: string
+    updatedAt:
+      type: string
+    createdAt:
+      type: string
+    itemsPerCategory:
+      $ref: "#/categorizedItemArray"
+
+categorizedItemArray:
+  type: array
+  items:
+    $ref: "#/categorizedItem"
+
+categorizedItem:
+  type: object
+  properties:
+    category:
+      type: string
+    items:
+      $ref: "#/shoppingListItem"
+
+shoppingListItem:
+  type: object
+  properties:
+    name:
+      type: string
+    quantity:
+      type: integer
+    unit:
+      type: string
+    purchased:
+      type: boolean

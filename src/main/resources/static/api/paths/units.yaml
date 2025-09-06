@@ -1,0 +1,6 @@
+/units:
+  get:
+    summary: "Retrieve all units."
+    responses:
+      "200":
+        description: "Everything went fine"

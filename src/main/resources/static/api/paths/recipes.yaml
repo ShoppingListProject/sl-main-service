@@ -1,0 +1,14 @@
+/recipes{userId}:
+  get:
+    summary: "Retrieve all recipes for user."
+    description: "Retrieve all recipes that were created by specified user."
+    responses:
+
+      "200":
+        description: "Everything went fine"
+
+      "403":
+        description: "The client didn't have access rights to the content"
+
+      "404":
+        description: "The requested resource could not be found"
