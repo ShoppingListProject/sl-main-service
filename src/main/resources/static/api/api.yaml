@@ -7,23 +7,23 @@ paths:
 
   /shoppingLists/{userId}:
     $ref: "paths/shoppingLists.yaml#/shoppingListsForUser"
-#
-#  /recipes/{userId}:
-#    $ref: "./paths/recipes.yaml#recipes/{userId}"
-#
-#  /units:
-#    $ref: "./paths/units.yaml#units"
-#
-#  /categories:
-#    $ref: "./paths/categories.yaml#categories"
-#
+
+  /recipes/{userId}:
+    $ref: "paths/recipes.yaml#/recipesForUser"
+
+  /units:
+    $ref: "paths/units.yaml#/units"
+
+  /categories:
+    $ref: "paths/categories.yaml#/categories"
+
 components:
   schemas:
 
     shoppingList:
-      $ref: "schemas/shoppingList.yaml#/shoppingList"
-#    recipe:
-#      $ref: "./schemas/recipe.yaml"
+      $ref: "schemas/shoppingLists.yaml#/shoppingList"
+    recipe:
+      $ref: "schemas/recipes.yaml#/recipe"
 
   responses:
     forbidden:

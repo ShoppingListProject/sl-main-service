@@ -1,6 +1,14 @@
-/units:
+units:
   get:
     summary: "Retrieve all units."
     responses:
+
       "200":
         description: "Everything went fine"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+

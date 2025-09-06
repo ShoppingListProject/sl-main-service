@@ -1,4 +1,4 @@
-/recipes{userId}:
+recipesForUser:
   get:
     summary: "Retrieve all recipes for user."
     description: "Retrieve all recipes that were created by specified user."
@@ -6,9 +6,15 @@
 
       "200":
         description: "Everything went fine"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../api.yaml#/components/schemas/recipe"
 
       "403":
-        description: "The client didn't have access rights to the content"
+        $ref: "../api.yaml#/components/responses/forbidden"
 
       "404":
-        description: "The requested resource could not be found"
+        $ref: "../api.yaml#/components/responses/notFound"

@@ -1,6 +1,13 @@
-/categories:
+categories:
   get:
     summary: "Retrieve all categories."
     responses:
+
       "200":
         description: "Everything went fine"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
