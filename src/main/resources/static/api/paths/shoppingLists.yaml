@@ -6,6 +6,8 @@ shoppingListsForUser:
       - name: userId
         in: path
         required: true
+        schema:
+          type: integer
     responses:
 
       "200":
