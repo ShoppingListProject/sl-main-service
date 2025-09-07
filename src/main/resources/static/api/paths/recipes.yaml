@@ -2,6 +2,8 @@ recipesForUser:
   get:
     summary: "Retrieve all recipes for user."
     description: "Retrieve all recipes that were created by specified user."
+    tags:
+      - Recipes
     parameters:
       - name: userId
         in: path

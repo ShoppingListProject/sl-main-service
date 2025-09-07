@@ -1,5 +1,7 @@
 units:
   get:
+    tags:
+      - Units
     summary: "Retrieve all units."
     responses:
 

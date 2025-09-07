@@ -75,9 +75,13 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/static/api/api.yaml</inputSpec>
-                            <generatorName>java</generatorName>
+                            <generatorName>spring</generatorName>
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
+                                <useJakartaEe>true</useJakartaEe>
+                                <interfaceOnly>true</interfaceOnly>
+                                <openApiNullable>false</openApiNullable>
+                                <useTags>true</useTags>
                             </configOptions>
                         </configuration>
                     </execution>

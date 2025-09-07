@@ -1,5 +1,7 @@
 categories:
   get:
+    tags:
+      - Categories
     summary: "Retrieve all categories."
     responses:
 

@@ -2,6 +2,8 @@ shoppingListsForUser:
   get:
     summary: "Retrieve all shopping lists for user."
     description: "Retrieve all shopping lists that were created by specified user."
+    tags:
+      - ShoppingLists
     parameters:
       - name: userId
         in: path
