@@ -6,20 +6,104 @@ info:
 paths:
 
   /v1/shoppingLists/{userId}:
-    $ref: "paths/shoppingLists.yaml#/shoppingListsForUser"
+    get:
+      operationId: getShoppingListForUser
+      summary: Retrieve all shopping lists for user.
+      description: Retrieve all shopping lists that were created by specified user.
+      tags:
+        - ShoppingLists
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+
+        "200":
+          description: Everything went fine
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/shoppingList"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
+
+        "404":
+          $ref: "#/components/responses/notFound"
+
 
   /v1/recipes/{userId}:
-    $ref: "paths/recipes.yaml#/recipesForUser"
+    get:
+      operationId: getRecipesForUser
+      summary: Retrieve all recipes for user.
+      description: Retrieve all recipes that were created by specified user.
+      tags:
+        - Recipes
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+
+        "200":
+          description: Everything went fine
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/recipe"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
+
+        "404":
+          $ref: "#/components/responses/notFound"
 
   /v1/units:
-    $ref: "paths/units.yaml#/units"
+    get:
+      operationId: getAllUnits
+      tags:
+        - Units
+      summary: Retrieve all units.
+      responses:
+
+        "200":
+          description: Everything went fine
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
 
   /v1/categories:
-    $ref: "paths/categories.yaml#/categories"
+    get:
+      operationId: getAllCategories
+      tags:
+        - Categories
+      summary: Retrieve all categories.
+      responses:
+
+        "200":
+          description: Everything went fine
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
 
 components:
-  schemas:
 
+  schemas:
     shoppingList:
       $ref: "schemas/shoppingLists.yaml#/shoppingList"
     recipe:
