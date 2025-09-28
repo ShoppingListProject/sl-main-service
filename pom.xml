@@ -55,6 +55,12 @@
             <version>2.8.12</version> <!-- use the latest -->
         </dependency>
 
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>dynamodb</artifactId>
+            <version>2.33.7</version>
+        </dependency>
+
 	</dependencies>
 
 	<build>

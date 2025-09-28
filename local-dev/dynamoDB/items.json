@@ -1,0 +1,123 @@
+{
+  "SLTable": [
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "GLOBAL#RECIPES"},
+          "SK": {"S": "RECIPE#d5413c10-e69b-4841-92f3-7f1152194387"},
+          "createdAt": {"S":  "2025-09-27T15:16:05.951250500Z"},
+          "updatedAt": {"S":  "2025-09-27T15:16:05.951250500Z"},
+          "name": {"S":  "Spaghetti"},
+          "items": {
+            "L": [
+              {
+                "M": {
+                  "name": { "S": "Tomato Passata" },
+                  "quantity": { "N": "250" },
+                  "unit": { "S": "g" },
+                  "category": { "S": "Pantry / Dry Goods" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Minced Meat" },
+                  "quantity": { "N": "400" },
+                  "unit": { "S": "g" },
+                  "category": { "S": "Meat" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Spaghetti Pasta" },
+                  "quantity": { "N": "200" },
+                  "unit": { "S": "g" },
+                  "category": { "S": "Pantry / Dry Goods" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Parmesan Cheese" },
+                  "quantity": { "N": "50" },
+                  "unit": { "S": "g" },
+                  "category": { "S": "Dairy & Eggs" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Concentrated Tomato Paste" },
+                  "quantity": { "N": "1" },
+                  "unit": { "S": "spoons" },
+                  "category": { "S": "Pantry / Dry Goods" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Garlic Clove" },
+                  "quantity": { "N": "1" },
+                  "unit": { "S": "unit" },
+                  "category": { "S": "Vegetables & Fruits" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Onion" },
+                  "quantity": { "N": "1" },
+                  "unit": { "S": "unit" },
+                  "category": { "S": "Vegetables & Fruits" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Dried Thyme" },
+                  "quantity": { "N": "0.5" },
+                  "unit": { "S": "teaspoons" },
+                  "category": { "S": "Spices" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Dried Oregano" },
+                  "quantity": { "N": "0.5" },
+                  "unit": { "S": "teaspoons" },
+                  "category": { "S": "Spices" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Olive Oil" },
+                  "quantity": { "N": "2" },
+                  "unit": { "S": "spoons" },
+                  "category": { "S": "Pantry / Dry Goods" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Salt" },
+                  "quantity": { "N": "2" },
+                  "unit": { "S": "teaspoons" },
+                  "category": { "S": "Spices" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Pepper" },
+                  "quantity": { "N": "0.5" },
+                  "unit": { "S": "teaspoons" },
+                  "category": { "S": "Spices" }
+                }
+              },
+              {
+                "M": {
+                  "name": { "S": "Basil Leaves" },
+                  "quantity": { "N": "5" },
+                  "unit": { "S": "units" },
+                  "category": { "S": "Vegetables & Fruits" }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
