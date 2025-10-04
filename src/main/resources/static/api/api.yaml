@@ -104,14 +104,81 @@ paths:
 components:
 
   schemas:
+
     shoppingList:
-      $ref: "schemas/shoppingLists.yaml#/shoppingList"
+      type: object
+      properties:
+        name:
+          type: string
+        updatedAt:
+          type: string
+        createdAt:
+          type: string
+        itemsPerCategory:
+          type: array
+          items:
+            $ref: "#/components/schemas/categorizedItem"
+
+    categorizedItem:
+      type: object
+      properties:
+        category:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/shoppingListItem"
+
+    shoppingListItem:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+        unit:
+          type: string
+        purchased:
+          type: boolean
+
     recipe:
-      $ref: "schemas/recipes.yaml#/recipe"
+      type: object
+      properties:
+        name:
+          type: string
+        updatedAt:
+          type: string
+        createdAt:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/recipeItem"
+
+    recipeItem:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+        unit:
+          type: string
+        category:
+          type: string
 
   responses:
     forbidden:
-      $ref: "responses/responses.yaml#/forbidden"
+      description: "The client doesn't have access rights to the content"
+      content:
+        application/json:
+          schema:
+            type: string
+
     notFound:
-      $ref: "responses/responses.yaml#/notFound"
+      description: "The requested resource could not be found"
+      content:
+        application/json:
+          schema:
+            type: string
 
