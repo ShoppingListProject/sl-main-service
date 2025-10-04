@@ -2,8 +2,9 @@ package com.jrakus.sl_main_service.repositories;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jrakus.sl_main_service.configuration.DynamoDBTableConfig;
+import org.openapitools.model.CategorizedItem;
 import org.openapitools.model.ShoppingList;
-import org.openapitools.model.ShoppingListItemsPerCategoryInner;
+import org.openapitools.model.ShoppingListItem;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -51,25 +52,54 @@ public class ShoppingListRepository {
 
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
-        List<Map<String, AttributeValue>> items = queryResponse.items();
-        List<ShoppingList> shoppingLists = new ArrayList<>();
-
-        queryResponse.items().stream()
-                .map(item -> {
+        return queryResponse.items().stream()
+                .map(shoppingListDynamoDB -> {
 
                     ShoppingList shoppingList = new ShoppingList();
 
-                    List<ShoppingListItemsPerCategoryInner> itemsPerCategory = objectMapper.readValue(
+                    shoppingList.setName(shoppingListDynamoDB.get("name").s());
+                    shoppingList.setCreatedAt(shoppingListDynamoDB.get("createdAt").s());
+                    shoppingList.setUpdatedAt(shoppingListDynamoDB.get("updatedAt").s());
 
-                    shoppingList.setName(item.get("name").s());
-                    shoppingList.setCreatedAt(item.get("createdAt").s());
-                    shoppingList.setUpdatedAt(item.get("updatedAt").s());
-                    shoppingList.setItemsPerCategory(item.get("itemsPerCategory"));
+                    List<CategorizedItem> itemsPerCategory = shoppingListDynamoDB.get("itemsPerCategory")
+                            .l()
+                            .stream()
+                            .map(itemsPerCategoryDynamoDB -> {
+
+                                CategorizedItem categorizedItem = new CategorizedItem();
+
+                                 String category = itemsPerCategoryDynamoDB.m().get("category").s();
+
+                                 List<ShoppingListItem> shoppingListItemList =  itemsPerCategoryDynamoDB.m()
+                                         .get("items")
+                                         .l()
+                                         .stream()
+                                         .map(item -> {
+
+                                     ShoppingListItem shoppingListItem = new ShoppingListItem();
+
+                                     String name = item.m().get("name").s();
+                                     Integer quantity = Integer.valueOf(item.m().get("quantity").n());
+                                     String unit = item.m().get("unit").s();
+                                     Boolean purchased = item.m().get("purchased").bool();
+
+                                     shoppingListItem.setName(name);
+                                     shoppingListItem.setQuantity(quantity);
+                                     shoppingListItem.setUnit(unit);
+                                     shoppingListItem.setPurchased(purchased);
+
+                                     return shoppingListItem;
+                                 }).toList();
+
+                                categorizedItem.setCategory(category);
+                                categorizedItem.setItems(shoppingListItemList);
+
+                                return categorizedItem;
+                            }).toList();
 
                     return shoppingList;
 
-                })
-                .toList();
+                }).toList();
     }
 
 }
