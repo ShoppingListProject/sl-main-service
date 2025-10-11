@@ -28,7 +28,7 @@ public class RecipeMapper {
         return items.stream()
                 .map(AttributeValue::m)
                 .map(this::mapRecipeItem)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private RecipeItem mapRecipeItem(Map<String, AttributeValue> itemMap) {
