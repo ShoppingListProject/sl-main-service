@@ -1,7 +1,7 @@
 package com.jrakus.sl_main_service.repositories.dynamo_db;
 
-import com.jrakus.sl_main_service.configuration.DynamoDBTableConfig;
 import com.jrakus.sl_main_service.repositories.ShoppingListRepository;
+import com.jrakus.sl_main_service.repositories.dynamo_db.utils.DynamoDBQueryHelper;
 import org.openapitools.model.CategorizedItem;
 import org.openapitools.model.ShoppingList;
 import org.openapitools.model.ShoppingListItem;
@@ -18,37 +18,19 @@ import java.util.Map;
 @Repository
 public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
 
-    private final DynamoDbClient dynamoDbClient;
-    private final String tableName;
+    private final DynamoDBQueryHelper dynamoDBQueryHelper;
 
     private final String pkPrefix = "USER#";
     private final String skPrefix = "SHOPPING_LIST#";
 
-    public ShoppingListRepositoryDynamoDB(
-            DynamoDbClient dynamoDbClient,
-            DynamoDBTableConfig dynamoDBTableConfig
-    ) {
-        this.dynamoDbClient = dynamoDbClient;
-        this.tableName = dynamoDBTableConfig.getTableName();
+    public ShoppingListRepositoryDynamoDB(DynamoDBQueryHelper dynamoDBQueryHelper) {
+        this.dynamoDBQueryHelper = dynamoDBQueryHelper;
     }
 
     public List<ShoppingList> getAllShoppingListsForUser(String userId) {
 
-        String pkValue = this.pkPrefix + userId;
-
-        Map<String, AttributeValue> expressionValues = new HashMap<>();
-        expressionValues.put(":pkVal", AttributeValue.builder().s(pkValue).build());
-        expressionValues.put(":skPrefix", AttributeValue.builder().s(this.skPrefix).build());
-
-        String keyConditionExpression = "PK = :pkVal AND begins_with(SK, :skPrefix)";
-
-        QueryRequest queryRequest = QueryRequest.builder()
-                .tableName(tableName)
-                .keyConditionExpression(keyConditionExpression)
-                .expressionAttributeValues(expressionValues)
-                .build();
-
-        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
+        String pk = this.pkPrefix + userId;
+        QueryResponse queryResponse = dynamoDBQueryHelper.queryUsingPKAndSKPrefix(pk, this.skPrefix);
 
         return queryResponse.items().stream()
                 .map(shoppingListDynamoDB -> {

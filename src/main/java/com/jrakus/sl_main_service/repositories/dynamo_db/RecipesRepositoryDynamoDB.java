@@ -1,49 +1,32 @@
 package com.jrakus.sl_main_service.repositories.dynamo_db;
 
-import com.jrakus.sl_main_service.configuration.DynamoDBTableConfig;
 import com.jrakus.sl_main_service.repositories.RecipesRepository;
+import com.jrakus.sl_main_service.repositories.dynamo_db.utils.DynamoDBQueryHelper;
 import org.openapitools.model.Recipe;
 import org.openapitools.model.RecipeItem;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+@Repository
 public class RecipesRepositoryDynamoDB implements RecipesRepository {
 
-    private final DynamoDbClient dynamoDbClient;
-    private final String tableName;
+    private final DynamoDBQueryHelper dynamoDBQueryHelper;
 
     private final String pkGlobal = "GLOBAL#RECIPES";
 
     private final String pkPrefix = "USER#";
     private final String skPrefix = "RECIPE#";
 
-    public RecipesRepositoryDynamoDB(DynamoDbClient dynamoDbClient, DynamoDBTableConfig dynamoDBTableConfig) {
-        this.dynamoDbClient = dynamoDbClient;
-        this.tableName = dynamoDBTableConfig.getTableName();
+    public RecipesRepositoryDynamoDB(DynamoDBQueryHelper dynamoDBQueryHelper) {
+        this.dynamoDBQueryHelper = dynamoDBQueryHelper;
     }
 
     @Override
     public List<Recipe> getAllPublicRecipes() {
 
-        Map<String, AttributeValue> expressionValues = new HashMap<>();
-        expressionValues.put(":pkVal", AttributeValue.builder().s(pkGlobal).build());
-        expressionValues.put(":skPrefix", AttributeValue.builder().s(this.skPrefix).build());
-
-        String keyConditionExpression = "PK = :pkVal AND begins_with(SK, :skPrefix)";
-
-        QueryRequest queryRequest = QueryRequest.builder()
-                .tableName(tableName)
-                .keyConditionExpression(keyConditionExpression)
-                .expressionAttributeValues(expressionValues)
-                .build();
-
-        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
+        QueryResponse queryResponse = dynamoDBQueryHelper.queryUsingPKAndSKPrefix(this.pkGlobal, this.skPrefix);
 
         return queryResponse.items()
                 .stream()

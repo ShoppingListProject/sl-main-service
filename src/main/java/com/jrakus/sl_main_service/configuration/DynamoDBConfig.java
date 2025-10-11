@@ -1,6 +1,7 @@
 package com.jrakus.sl_main_service.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.jrakus.sl_main_service.properties.AWSProperties;
+import com.jrakus.sl_main_service.properties.DynamoDBProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -13,33 +14,28 @@ import java.net.URI;
 @Configuration
 public class DynamoDBConfig {
 
-    private final String dynamoDbEndpoint;
-    private final String region;
-    private final String accessKeyId;
-    private final String secretKey;
+    private final AWSProperties awsProperties;
+    private final DynamoDBProperties dynamoDBProperties;
 
-    public DynamoDBConfig(
-            @Value("${dynamodb.endpoint}") String dynamoDbEndpoint,
-            @Value("${dynamodb.region}") String region,
-            @Value("${aws.accessKeyId}") String accessKeyId,
-            @Value("${aws.secretKey}") String secretKey
-    ) {
-        this.dynamoDbEndpoint = dynamoDbEndpoint;
-        this.region = region;
-        this.accessKeyId = accessKeyId;
-        this.secretKey = secretKey;
+    public DynamoDBConfig(AWSProperties awsProperties, DynamoDBProperties dynamoDBProperties) {
+        this.awsProperties = awsProperties;
+        this.dynamoDBProperties = dynamoDBProperties;
     }
 
     @Bean
     public DynamoDbClient dynamoDbClient() {
-        return DynamoDbClient.builder()
-                .endpointOverride(URI.create(dynamoDbEndpoint))
-                .region(Region.of(region))
-                .credentialsProvider(
-                        StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create(accessKeyId, secretKey)
-                        )
+
+        StaticCredentialsProvider staticCredentialsProvider = StaticCredentialsProvider.create(
+                AwsBasicCredentials.create(
+                        this.awsProperties.getAccessKeyId(),
+                        this.awsProperties.getSecretKey()
                 )
+        );
+
+        return DynamoDbClient.builder()
+                .endpointOverride(URI.create(this.dynamoDBProperties.getEndpoint()))
+                .region(Region.of(this.awsProperties.getRegion()))
+                .credentialsProvider(staticCredentialsProvider)
                 .build();
     }
 }
