@@ -107,6 +107,11 @@ components:
 
     shoppingList:
       type: object
+      required:
+        - name
+        - updatedAt
+        - createdAt
+        - itemsPerCategory
       properties:
         name:
           type: string
@@ -121,6 +126,9 @@ components:
 
     categorizedItem:
       type: object
+      required:
+        - category
+        - items
       properties:
         category:
           type: string
@@ -131,6 +139,11 @@ components:
 
     shoppingListItem:
       type: object
+      required:
+        - name
+        - quantity
+        - unit
+        - purchased
       properties:
         name:
           type: string
@@ -143,6 +156,11 @@ components:
 
     recipe:
       type: object
+      required:
+        - name
+        - updatedAt
+        - createdAt
+        - items
       properties:
         name:
           type: string
@@ -157,6 +175,11 @@ components:
 
     recipeItem:
       type: object
+      required:
+        - name
+        - quantity
+        - unit
+        - category
       properties:
         name:
           type: string
