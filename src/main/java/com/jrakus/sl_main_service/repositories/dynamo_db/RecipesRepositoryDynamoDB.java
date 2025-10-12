@@ -5,8 +5,10 @@ import com.jrakus.sl_main_service.repositories.dynamo_db.mapper.RecipeMapper;
 import com.jrakus.sl_main_service.repositories.dynamo_db.utils.DynamoDBQueryHelper;
 import org.openapitools.model.Recipe;
 import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class RecipesRepositoryDynamoDB implements RecipesRepository {
@@ -35,5 +37,14 @@ public class RecipesRepositoryDynamoDB implements RecipesRepository {
                 .stream()
                 .map(recipeMapper::fromDynamoDB)
                 .toList();
+    }
+
+    @Override
+    public void saveRecipeForUser(String userId, Recipe recipe) {
+
+        String pk = this.pkPrefix + userId;
+
+        Map<String, AttributeValue> dynamoDBItem = recipeMapper.toDynamoDBItem(pk, this.skPrefix, recipe);
+        dynamoDBQueryHelper.saveSingleItem(dynamoDBItem);
     }
 }

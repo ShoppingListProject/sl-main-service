@@ -5,8 +5,10 @@ import com.jrakus.sl_main_service.repositories.dynamo_db.mapper.ShoppingListMapp
 import com.jrakus.sl_main_service.repositories.dynamo_db.utils.DynamoDBQueryHelper;
 import org.openapitools.model.ShoppingList;
 import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
@@ -35,4 +37,12 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
                 .toList();
     }
 
+    @Override
+    public void saveShoppingListForUser(String userId, ShoppingList shoppingList) {
+
+        String pk = this.pkPrefix + userId;
+
+        Map<String, AttributeValue> dynamoDBItem = shoppingListMapper.toDynamoDBItem(pk, this.skPrefix, shoppingList);
+        dynamoDBQueryHelper.saveSingleItem(dynamoDBItem);
+    }
 }

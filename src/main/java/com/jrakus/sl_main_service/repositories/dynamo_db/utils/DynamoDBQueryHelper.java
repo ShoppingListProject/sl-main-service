@@ -3,9 +3,7 @@ package com.jrakus.sl_main_service.repositories.dynamo_db.utils;
 import com.jrakus.sl_main_service.properties.DynamoDBProperties;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,5 +34,15 @@ public class DynamoDBQueryHelper {
                 .build();
 
         return dynamoDbClient.query(queryRequest);
+    }
+
+    public PutItemResponse saveSingleItem(Map<String, AttributeValue> item) {
+
+        PutItemRequest putRequest = PutItemRequest.builder()
+                .tableName(tableName)
+                .item(item)
+                .build();
+
+        return dynamoDbClient.putItem(putRequest);
     }
 }

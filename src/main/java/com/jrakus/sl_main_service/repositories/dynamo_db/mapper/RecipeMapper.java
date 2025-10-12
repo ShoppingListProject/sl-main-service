@@ -11,6 +11,10 @@ import java.util.Map;
 @Component
 public class RecipeMapper {
 
+    // ======================
+    // ======== READ ========
+    // ======================
+
     public Recipe fromDynamoDB(Map<String, AttributeValue> item) {
 
         Recipe recipe = new Recipe();
@@ -18,23 +22,57 @@ public class RecipeMapper {
         recipe.setName(item.get("name").s());
         recipe.setCreatedAt(item.get("createdAt").s());
         recipe.setUpdatedAt(item.get("updatedAt").s());
-        recipe.setItems(mapRecipeItems(item.get("items").l()));
+        recipe.setItems(mapToRecipeItems(item.get("items").l()));
 
         return recipe;
     }
 
-    private List<RecipeItem> mapRecipeItems(List<AttributeValue> items) {
+    private List<RecipeItem> mapToRecipeItems(List<AttributeValue> items) {
         return items.stream()
                 .map(AttributeValue::m)
-                .map(this::mapRecipeItem)
+                .map(this::mapToRecipeItem)
                 .toList();
     }
 
-    private RecipeItem mapRecipeItem(Map<String, AttributeValue> itemMap) {
+    private RecipeItem mapToRecipeItem(Map<String, AttributeValue> itemMap) {
         return new RecipeItem()
                 .category(itemMap.get("category").s())
                 .name(itemMap.get("name").s())
                 .quantity(Integer.parseInt(itemMap.get("quantity").n()))
                 .unit(itemMap.get("unit").s());
+    }
+
+    // =======================
+    // ======== WRITE ========
+    // =======================
+
+    public Map<String, AttributeValue> toDynamoDBItem(
+            String pk,
+            String sk,
+            Recipe recipe
+    ) {
+        return Map.of(
+                "PK", AttributeValue.builder().s(pk).build(),
+                "SK", AttributeValue.builder().s(sk).build(),
+                "name", AttributeValue.builder().s(recipe.getName()).build(),
+                "createdAt", AttributeValue.builder().s(recipe.getCreatedAt()).build(),
+                "updatedAt", AttributeValue.builder().s(recipe.getUpdatedAt()).build(),
+                "items", AttributeValue.builder().l(mapFromRecipeItems(recipe.getItems())).build()
+        );
+    }
+
+    private List<AttributeValue> mapFromRecipeItems(List<RecipeItem> items) {
+        return items.stream()
+                .map(this::mapFromRecipeItem)
+                .toList();
+    }
+
+    private AttributeValue mapFromRecipeItem(RecipeItem item) {
+        return AttributeValue.builder().m(Map.of(
+                "category", AttributeValue.builder().s(item.getCategory()).build(),
+                "name", AttributeValue.builder().s(item.getName()).build(),
+                "quantity", AttributeValue.builder().n(String.valueOf(item.getQuantity())).build(),
+                "unit", AttributeValue.builder().s(item.getUnit()).build()
+        )).build();
     }
 }

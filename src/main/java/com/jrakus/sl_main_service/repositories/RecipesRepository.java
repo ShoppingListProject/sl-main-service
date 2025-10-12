@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface RecipesRepository {
     List<Recipe> getAllPublicRecipes();
+    void saveRecipeForUser(String userId, Recipe recipe);
 }
