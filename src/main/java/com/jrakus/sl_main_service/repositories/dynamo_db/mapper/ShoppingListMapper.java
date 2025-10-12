@@ -6,6 +6,7 @@ import org.openapitools.model.ShoppingListItem;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -20,8 +21,8 @@ public class ShoppingListMapper {
         ShoppingList shoppingList = new ShoppingList();
 
         shoppingList.setName(item.get("name").s());
-        shoppingList.setCreatedAt(item.get("createdAt").s());
-        shoppingList.setUpdatedAt(item.get("updatedAt").s());
+        shoppingList.setCreatedAt(OffsetDateTime.parse(item.get("createdAt").s()));
+        shoppingList.setUpdatedAt(OffsetDateTime.parse(item.get("updatedAt").s()));
         shoppingList.setItemsPerCategory(mapToItemsPerCategory(item.get("itemsPerCategory").l()));
 
         return shoppingList;
@@ -69,8 +70,8 @@ public class ShoppingListMapper {
                 "PK", AttributeValue.builder().s(pk).build(),
                 "SK", AttributeValue.builder().s(sk).build(),
                 "name", AttributeValue.builder().s(shoppingList.getName()).build(),
-                "createdAt", AttributeValue.builder().s(shoppingList.getCreatedAt()).build(),
-                "updatedAt", AttributeValue.builder().s(shoppingList.getUpdatedAt()).build(),
+                "createdAt", AttributeValue.builder().s(shoppingList.getCreatedAt().toString()).build(),
+                "updatedAt", AttributeValue.builder().s(shoppingList.getUpdatedAt().toString()).build(),
                 "itemsPerCategory", AttributeValue.builder()
                         .l(mapFromItemsPerCategory(shoppingList.getItemsPerCategory()))
                         .build()

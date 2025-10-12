@@ -5,6 +5,7 @@ import org.openapitools.model.RecipeItem;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -20,8 +21,8 @@ public class RecipeMapper {
         Recipe recipe = new Recipe();
 
         recipe.setName(item.get("name").s());
-        recipe.setCreatedAt(item.get("createdAt").s());
-        recipe.setUpdatedAt(item.get("updatedAt").s());
+        recipe.setCreatedAt(OffsetDateTime.parse(item.get("createdAt").s()));
+        recipe.setUpdatedAt(OffsetDateTime.parse(item.get("updatedAt").s()));
         recipe.setItems(mapToRecipeItems(item.get("items").l()));
 
         return recipe;
@@ -55,8 +56,8 @@ public class RecipeMapper {
                 "PK", AttributeValue.builder().s(pk).build(),
                 "SK", AttributeValue.builder().s(sk).build(),
                 "name", AttributeValue.builder().s(recipe.getName()).build(),
-                "createdAt", AttributeValue.builder().s(recipe.getCreatedAt()).build(),
-                "updatedAt", AttributeValue.builder().s(recipe.getUpdatedAt()).build(),
+                "createdAt", AttributeValue.builder().s(recipe.getCreatedAt().toString()).build(),
+                "updatedAt", AttributeValue.builder().s(recipe.getUpdatedAt().toString()).build(),
                 "items", AttributeValue.builder().l(mapFromRecipeItems(recipe.getItems())).build()
         );
     }

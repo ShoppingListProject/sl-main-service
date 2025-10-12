@@ -138,8 +138,10 @@ components:
           type: string
         updatedAt:
           type: string
+          format: date-time
         createdAt:
           type: string
+          format: date-time
         itemsPerCategory:
           type: array
           items:
@@ -188,8 +190,10 @@ components:
           type: string
         updatedAt:
           type: string
+          format: date-time
         createdAt:
           type: string
+          format: date-time
         items:
           type: array
           items:
