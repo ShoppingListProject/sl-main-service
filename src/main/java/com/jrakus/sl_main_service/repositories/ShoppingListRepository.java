@@ -5,6 +5,8 @@ import org.openapitools.model.ShoppingList;
 import java.util.List;
 
 public interface ShoppingListRepository {
+
     List<ShoppingList> getAllShoppingListsForUser(String userId);
+
     void saveShoppingListForUser(String userId, ShoppingList shoppingList);
 }

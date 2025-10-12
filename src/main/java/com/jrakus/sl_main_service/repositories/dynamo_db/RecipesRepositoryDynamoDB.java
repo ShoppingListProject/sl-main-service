@@ -40,6 +40,19 @@ public class RecipesRepositoryDynamoDB implements RecipesRepository {
     }
 
     @Override
+    public List<Recipe> getRecipesForUser(String userId) {
+
+        String pk = pkPrefix + userId;
+
+        QueryResponse queryResponse = dynamoDBQueryHelper.queryUsingPKAndSKPrefix(pk, this.skPrefix);
+
+        return queryResponse.items()
+                .stream()
+                .map(recipeMapper::fromDynamoDB)
+                .toList();
+    }
+
+    @Override
     public void saveRecipeForUser(String userId, Recipe recipe) {
 
         String pk = this.pkPrefix + userId;
