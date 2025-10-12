@@ -38,7 +38,7 @@ public class RecipeMapper {
         return new RecipeItem()
                 .category(itemMap.get("category").s())
                 .name(itemMap.get("name").s())
-                .quantity(Integer.parseInt(itemMap.get("quantity").n()))
+                .quantity(Float.valueOf(itemMap.get("quantity").n()))
                 .unit(itemMap.get("unit").s());
     }
 

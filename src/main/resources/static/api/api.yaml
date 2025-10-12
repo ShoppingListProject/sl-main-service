@@ -169,7 +169,8 @@ components:
         name:
           type: string
         quantity:
-          type: integer
+          type: number
+          format: float
         unit:
           type: string
         purchased:
@@ -205,7 +206,8 @@ components:
         name:
           type: string
         quantity:
-          type: integer
+          type: number
+          format: float
         unit:
           type: string
         category:

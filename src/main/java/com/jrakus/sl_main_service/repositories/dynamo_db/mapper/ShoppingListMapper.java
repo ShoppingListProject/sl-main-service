@@ -52,7 +52,7 @@ public class ShoppingListMapper {
         return new ShoppingListItem()
                 .name(item.get("name").s())
                 .unit(item.get("unit").s())
-                .quantity(Integer.valueOf(item.get("quantity").n()))
+                .quantity(Float.valueOf((item.get("quantity").n())))
                 .purchased(item.get("purchased").bool());
     }
 
