@@ -66,7 +66,7 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
-  /v1/publicRecipes:
+  /v1/recipes/publicRecipes:
     get:
       operationId: getPublicRecipes
       summary: Retrieve all public recipes.
@@ -87,11 +87,11 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
-  /v1/units:
+  /v1/constants/units:
     get:
       operationId: getAllUnits
       tags:
-        - Units
+        - Constants
       summary: Retrieve all units.
       responses:
 
@@ -105,11 +105,11 @@ paths:
                   type: string
 
 
-  /v1/categories:
+  /v1/constants/categories:
     get:
       operationId: getAllCategories
       tags:
-        - Categories
+        - Constants
       summary: Retrieve all categories.
       responses:
 
