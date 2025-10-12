@@ -10,6 +10,7 @@ import java.util.List;
 public class ConstantsProperties {
 
     private List<String> units;
+    private List<String> categories;
 
     public List<String> getUnits() {
         return units;
@@ -17,5 +18,13 @@ public class ConstantsProperties {
 
     public void setUnits(List<String> units) {
         this.units = units;
+    }
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
     }
 }

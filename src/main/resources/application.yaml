@@ -24,3 +24,16 @@ constants:
     - pieces
     - spoons
     - teaspoons
+
+  categories:
+    - Vegetables & Fruits
+    - Bread
+    - Dairy & Eggs
+    - Beverages
+    - Pantry / Dry Goods
+    - Personal Care
+    - Cleaning
+    - Snacks
+    - Other
+    - Spices
+    - Meat

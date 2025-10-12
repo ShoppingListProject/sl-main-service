@@ -18,7 +18,10 @@ public class ConstantController implements ConstantsApi {
 
     @Override
     public ResponseEntity<List<String>> getAllCategories() {
-        return null;
+
+        List<String> categories = constantsProperties.getCategories();
+
+        return ResponseEntity.ok(categories);
     }
 
     @Override
