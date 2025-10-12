@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: sl-main-service
+
+springdoc:
+  swagger-ui:
+    url: /api/api.yaml
+
+dynamodb:
+  endpoint: http://localhost:8000
+  tableName: SLTable
+
+aws:
+  region: us-east-1
+  accessKeyId: fakeKeyId
+  secretKey: fakeKey
+
+constants:
+  units:
+    - g
+    - kg
+    - ml
+    - l
+    - pieces
+    - spoons
+    - teaspoons
