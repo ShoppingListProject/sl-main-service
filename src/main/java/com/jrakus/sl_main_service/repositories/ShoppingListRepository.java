@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ShoppingListRepository {
 
-    List<ShoppingList> getAllShoppingListsForUser(String userId);
+    List<ShoppingList> getShoppingListsForUser(String userId);
 
     void saveShoppingListForUser(String userId, ShoppingList shoppingList);
 }

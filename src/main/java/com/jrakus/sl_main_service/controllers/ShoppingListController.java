@@ -1,5 +1,6 @@
 package com.jrakus.sl_main_service.controllers;
 
+import com.jrakus.sl_main_service.repositories.ShoppingListRepository;
 import org.openapitools.api.ShoppingListsApi;
 import org.openapitools.model.ShoppingList;
 import org.springframework.http.ResponseEntity;
@@ -9,13 +10,17 @@ import java.util.List;
 @RestController
 public class ShoppingListController implements ShoppingListsApi {
 
+    private final ShoppingListRepository shoppingListRepository;
+
+    public ShoppingListController(ShoppingListRepository shoppingListRepository) {
+        this.shoppingListRepository = shoppingListRepository;
+    }
+
     @Override
-    public ResponseEntity<List<ShoppingList>> getShoppingListForUser(Integer userId) {
+    public ResponseEntity<List<ShoppingList>> getShoppingListForUser(String userId) {
 
-        List<ShoppingList> shoppingListArray = List.of(
-                new ShoppingList()
-        );
+        List<ShoppingList> shoppingLists = shoppingListRepository.getShoppingListsForUser(userId);
 
-        return ResponseEntity.ok(shoppingListArray);
+        return ResponseEntity.ok(shoppingLists);
     }
 }

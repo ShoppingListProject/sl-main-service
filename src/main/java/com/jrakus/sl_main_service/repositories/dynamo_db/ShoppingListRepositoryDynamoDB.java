@@ -26,7 +26,7 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
         this.shoppingListMapper = shoppingListMapper;
     }
 
-    public List<ShoppingList> getAllShoppingListsForUser(String userId) {
+    public List<ShoppingList> getShoppingListsForUser(String userId) {
 
         String pk = this.pkPrefix + userId;
         QueryResponse queryResponse = dynamoDBQueryHelper.queryUsingPKAndSKPrefix(pk, this.skPrefix);
