@@ -66,6 +66,27 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
+  /v1/publicRecipes:
+    get:
+      operationId: getPublicRecipes
+      summary: Retrieve all public recipes.
+      description: Retrieve all recipes that are public.
+      tags:
+        - Recipes
+      responses:
+
+        "200":
+          description: Everything went fine
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/recipe"
+
+        "404":
+          $ref: "#/components/responses/notFound"
+
   /v1/units:
     get:
       operationId: getAllUnits

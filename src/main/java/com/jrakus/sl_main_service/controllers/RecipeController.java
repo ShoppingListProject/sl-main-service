@@ -24,4 +24,12 @@ public class RecipeController implements RecipesApi {
 
         return ResponseEntity.ok(recipes);
     }
+
+    @Override
+    public ResponseEntity<List<Recipe>> getPublicRecipes() {
+
+        List<Recipe> recipes = recipesRepository.getAllPublicRecipes();
+
+        return ResponseEntity.ok(recipes);
+    }
 }
