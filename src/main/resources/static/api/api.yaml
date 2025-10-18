@@ -7,7 +7,7 @@ paths:
 
   /v1/shoppingLists/{userId}:
     get:
-      operationId: getShoppingListForUser
+      operationId: getShoppingListsForUser
       summary: Retrieve all shopping lists for user.
       description: Retrieve all shopping lists that were created by specified user.
       tags:
@@ -16,6 +16,7 @@ paths:
         - name: userId
           in: path
           required: true
+          description: The unique ID of the user.
           schema:
             type: string
       responses:
@@ -35,6 +36,129 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
+    post:
+      operationId: createShoppingList
+      summary: Create new shopping list for user.
+      description: Create new shopping list for user by analyzing received recipes.
+      tags:
+        - ShoppingLists
+
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+
+      requestBody:
+        description: |
+          An object with two required fields:
+          - Name for new shopping list
+          - Array of recipes which will be used to create a shopping list.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/newShoppingListRequest"
+
+      responses:
+
+        "201":
+          description: The item has been created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/shoppingList"
+
+        "409":
+          $ref: "#/components/responses/alreadyExists"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
+
+        "404":
+          $ref: "#/components/responses/notFound"
+
+  /v1/shoppingLists/{userId}/{shoppingListId}:
+    put:
+      operationId: updateShoppingList
+      summary: Update shopping list.
+      description: Update existing shopping list.
+      tags:
+        - ShoppingLists
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+
+        - name: shoppingListId
+          in: path
+          required: true
+          description: The unique ID of the shopping list.
+          schema:
+            type: string
+
+      requestBody:
+        description: Shopping List which will be modified
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/shoppingList"
+
+      responses:
+
+        "201":
+          description: The item has been created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/shoppingList"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
+
+        "404":
+          $ref: "#/components/responses/notFound"
+
+    delete:
+      operationId: deleteShoppingList
+      summary: Delete existing shopping list for user.
+      description: Delete new shopping list for user by analyzing received recipes.
+      tags:
+        - ShoppingLists
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+
+        - name: shoppingListId
+          in: path
+          required: true
+          description: The unique ID of the shopping list.
+          schema:
+            type: string
+
+      responses:
+
+        "204":
+          description: The item has been deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/shoppingList"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
+
+        "404":
+          $ref: "#/components/responses/notFound"
 
   /v1/recipes/{userId}:
     get:
@@ -47,6 +171,7 @@ paths:
         - name: userId
           in: path
           required: true
+          description: The unique ID of the user.
           schema:
             type: string
       responses:
@@ -145,9 +270,9 @@ components:
         itemsPerCategory:
           type: array
           items:
-            $ref: "#/components/schemas/categorizedItem"
+            $ref: "#/components/schemas/categorizedItems"
 
-    categorizedItem:
+    categorizedItems:
       type: object
       required:
         - category
@@ -217,6 +342,20 @@ components:
         category:
           type: string
 
+    newShoppingListRequest:
+      type: object
+      required:
+        - name
+        - recipes
+      properties:
+        name:
+          type: string
+        recipes:
+          type: array
+          items:
+            $ref: "#/components/schemas/recipe"
+
+
   responses:
     forbidden:
       description: "The client doesn't have access rights to the content"
@@ -227,6 +366,13 @@ components:
 
     notFound:
       description: "The requested resource could not be found"
+      content:
+        application/json:
+          schema:
+            type: string
+
+    alreadyExists:
+      description: "The resource already exists."
       content:
         application/json:
           schema:
