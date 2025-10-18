@@ -1,6 +1,6 @@
 package com.jrakus.sl_main_service.repositories.dynamo_db.mapper;
 
-import org.openapitools.model.CategorizedItem;
+import org.openapitools.model.CategorizedItems;
 import org.openapitools.model.ShoppingList;
 import org.openapitools.model.ShoppingListItem;
 import org.springframework.stereotype.Component;
@@ -28,15 +28,15 @@ public class ShoppingListMapper {
         return shoppingList;
     }
 
-    private List<CategorizedItem> mapToItemsPerCategory(List<AttributeValue> items) {
+    private List<CategorizedItems> mapToItemsPerCategory(List<AttributeValue> items) {
         return items.stream()
                 .map(AttributeValue::m)
                 .map(this::mapToCategorizedItems)
                 .toList();
     }
 
-    private CategorizedItem mapToCategorizedItems(Map<String, AttributeValue> item) {
-        return new CategorizedItem()
+    private CategorizedItems mapToCategorizedItems(Map<String, AttributeValue> item) {
+        return new CategorizedItems()
                 .category(item.get("category").s())
                 .items(mapToShoppingListItems(item.get("items").l()));
     }
@@ -78,13 +78,13 @@ public class ShoppingListMapper {
         );
     }
 
-    private List<AttributeValue> mapFromItemsPerCategory(List<CategorizedItem> itemsPerCategory) {
+    private List<AttributeValue> mapFromItemsPerCategory(List<CategorizedItems> itemsPerCategory) {
         return itemsPerCategory.stream()
                 .map(this::mapFromCategorizedItem)
                 .toList();
     }
 
-    private AttributeValue mapFromCategorizedItem(CategorizedItem categorizedItem) {
+    private AttributeValue mapFromCategorizedItem(CategorizedItems categorizedItem) {
         return AttributeValue.builder()
                 .m(Map.of(
                         "category", AttributeValue.builder().s(categorizedItem.getCategory()).build(),
