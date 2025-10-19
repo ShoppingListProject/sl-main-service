@@ -117,7 +117,7 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
     @Override
     public void deleteRecipeForUser(String userId, String recipeId) {
 
-        String pk = this.pkGlobal + userId;
+        String pk = this.pkPrefix + userId;
         String sk = this.skPrefix + recipeId;
 
         dynamoDBQueryHelper.deleteSingleItem(pk, sk);
