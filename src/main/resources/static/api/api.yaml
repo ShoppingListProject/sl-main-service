@@ -33,9 +33,6 @@ paths:
         "403":
           $ref: "#/components/responses/forbidden"
 
-        "401":
-          $ref: "#/components/responses/unauthenticated"
-
     post:
       operationId: createShoppingList
       summary: Create new shopping list for user.
@@ -73,9 +70,6 @@ paths:
 
         "403":
           $ref: "#/components/responses/forbidden"
-
-        "401":
-          $ref: "#/components/responses/unauthenticated"
 
   /v1/shoppingLists/{userId}/{shoppingListId}:
     put:
@@ -122,9 +116,6 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
-        "401":
-          $ref: "#/components/responses/unauthenticated"
-
     delete:
       operationId: deleteShoppingList
       summary: Delete existing shopping list for user.
@@ -160,9 +151,6 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
-        "401":
-          $ref: "#/components/responses/unauthenticated"
-
   /v1/recipes/{userId}:
     get:
       operationId: getRecipesForUser
@@ -190,9 +178,6 @@ paths:
 
         "403":
           $ref: "#/components/responses/forbidden"
-
-        "401":
-          $ref: "#/components/responses/unauthenticated"
 
     post:
       operationId: createRecipesForUser
@@ -226,9 +211,6 @@ paths:
         "403":
           $ref: "#/components/responses/forbidden"
 
-        "401":
-          $ref: "#/components/responses/unauthenticated"
-
   /v1/recipes/publicRecipes:
     get:
       operationId: getPublicRecipes
@@ -247,9 +229,6 @@ paths:
                 items:
                   $ref: "#/components/schemas/recipe"
 
-        "401":
-          $ref: "#/components/responses/unauthenticated"
-
   /v1/constants/units:
     get:
       operationId: getAllUnits
@@ -267,10 +246,6 @@ paths:
                 items:
                   type: string
 
-        "401":
-          $ref: "#/components/responses/unauthenticated"
-
-
   /v1/constants/categories:
     get:
       operationId: getAllCategories
@@ -287,9 +262,6 @@ paths:
                 type: array
                 items:
                   type: string
-
-        "401":
-          $ref: "#/components/responses/unauthenticated"
 
 components:
 
