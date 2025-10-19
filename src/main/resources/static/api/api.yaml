@@ -108,7 +108,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/shoppingList"
+              $ref: "#/components/schemas/shoppingListBase"
 
       responses:
 
@@ -147,7 +147,7 @@ paths:
 
       responses:
 
-        "204":
+        "200":
           description: The item has been deleted
           content:
             application/json:

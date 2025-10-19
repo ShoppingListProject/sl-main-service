@@ -6,6 +6,7 @@ import com.jrakus.sl_main_service.repositories.ShoppingListRepository;
 import org.openapitools.api.ShoppingListsApi;
 import org.openapitools.model.Recipe;
 import org.openapitools.model.ShoppingList;
+import org.openapitools.model.ShoppingListBase;
 import org.openapitools.model.ShoppingListCreate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,11 +57,32 @@ public class ShoppingListController implements ShoppingListsApi {
 
     @Override
     public ResponseEntity<ShoppingList> deleteShoppingList(String userId, String shoppingListId) {
-        return null;
+
+        // TODO
+        // 1) Check if the element already exists
+        // 2) Return the deleted item
+
+        shoppingListRepository.deleteShoppingList(userId, shoppingListId);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<ShoppingList> updateShoppingList(String userId, String shoppingListId, ShoppingList shoppingList) {
-        return null;
+    public ResponseEntity<ShoppingList> updateShoppingList(
+            String userId, String shoppingListId, ShoppingListBase shoppingListBase
+    ) {
+
+        // TODO
+        // Check if the element already exists
+
+        ShoppingList shoppingList = new ShoppingList()
+                .shoppingListId(shoppingListId)
+                .name(shoppingListBase.getName())
+                .updatedAt(shoppingListBase.getUpdatedAt())
+                .createdAt(shoppingListBase.getCreatedAt())
+                .itemsPerCategory(shoppingListBase.getItemsPerCategory());
+
+        shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
+
+        return ResponseEntity.ok(shoppingList);
     }
 }

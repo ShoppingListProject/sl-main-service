@@ -4,6 +4,7 @@ import com.jrakus.sl_main_service.repositories.ShoppingListRepository;
 import com.jrakus.sl_main_service.repositories.dynamo_db.mapper.ShoppingListMapper;
 import com.jrakus.sl_main_service.repositories.dynamo_db.utils.DynamoDBQueryHelper;
 import org.openapitools.model.ShoppingList;
+import org.openapitools.model.ShoppingListBase;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
@@ -43,7 +44,7 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
         String pk = this.pkPrefix + userId;
         String sk = this.skPrefix + shoppingList.getShoppingListId();
 
-        ShoppingList shoppingListBase = new ShoppingList()
+        ShoppingListBase shoppingListBase = new ShoppingListBase()
                 .name(shoppingList.getName())
                 .createdAt(shoppingList.getCreatedAt())
                 .updatedAt(shoppingList.getUpdatedAt())
@@ -51,5 +52,13 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
 
         Map<String, AttributeValue> dynamoDBItem = shoppingListMapper.toDynamoDBItem(pk, sk, shoppingListBase);
         dynamoDBQueryHelper.saveSingleItem(dynamoDBItem);
+    }
+
+    @Override
+    public void deleteShoppingList(String userId, String shoppingListId) {
+        String pk = this.pkPrefix + userId;
+        String sk = this.skPrefix + shoppingListId;
+
+        dynamoDBQueryHelper.deleteSingleItem(pk, sk);
     }
 }

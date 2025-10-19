@@ -9,4 +9,6 @@ public interface ShoppingListRepository {
     List<ShoppingList> getShoppingListsForUser(String userId);
 
     void saveShoppingListForUser(String userId, ShoppingList shoppingList);
+
+    void deleteShoppingList(String userId, String shoppingListId);
 }

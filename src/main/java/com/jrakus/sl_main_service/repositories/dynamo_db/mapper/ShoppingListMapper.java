@@ -2,6 +2,7 @@ package com.jrakus.sl_main_service.repositories.dynamo_db.mapper;
 
 import org.openapitools.model.CategorizedItems;
 import org.openapitools.model.ShoppingList;
+import org.openapitools.model.ShoppingListBase;
 import org.openapitools.model.ShoppingListItem;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -67,7 +68,7 @@ public class ShoppingListMapper {
     public Map<String, AttributeValue> toDynamoDBItem(
             String pk,
             String sk,
-            ShoppingList shoppingList
+            ShoppingListBase shoppingList
     ) {
         return Map.of(
                 "PK", AttributeValue.builder().s(pk).build(),

@@ -1,6 +1,7 @@
 package com.jrakus.sl_main_service.repositories.dynamo_db.mapper;
 
 import org.openapitools.model.Recipe;
+import org.openapitools.model.RecipeBase;
 import org.openapitools.model.RecipeItem;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -53,7 +54,7 @@ public class RecipeMapper {
     public Map<String, AttributeValue> toDynamoDBItem(
             String pk,
             String sk,
-            Recipe recipe
+            RecipeBase recipe
     ) {
         return Map.of(
                 "PK", AttributeValue.builder().s(pk).build(),

@@ -65,13 +65,27 @@ public class DynamoDBQueryHelper {
         return response.responses().get(tableName);
     }
 
-    public PutItemResponse saveSingleItem(Map<String, AttributeValue> item) {
+    public void deleteSingleItem(String pk, String sk) {
+
+        Map<String, AttributeValue> key = new HashMap<>();
+        key.put("PK", AttributeValue.builder().s(pk).build());
+        key.put("SK", AttributeValue.builder().s(sk).build());
+
+        DeleteItemRequest request = DeleteItemRequest.builder()
+                .tableName(tableName)
+                .key(key)
+                .build();
+
+        ddb.deleteItem(request);
+    }
+
+    public void saveSingleItem(Map<String, AttributeValue> item) {
 
         PutItemRequest putRequest = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(item)
                 .build();
 
-        return ddb.putItem(putRequest);
+        ddb.putItem(putRequest);
     }
 }
