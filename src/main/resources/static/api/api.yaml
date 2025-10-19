@@ -33,8 +33,8 @@ paths:
         "403":
           $ref: "#/components/responses/forbidden"
 
-        "404":
-          $ref: "#/components/responses/notFound"
+        "401":
+          $ref: "#/components/responses/unauthenticated"
 
     post:
       operationId: createShoppingList
@@ -71,14 +71,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/shoppingList"
 
-        "409":
-          $ref: "#/components/responses/alreadyExists"
-
         "403":
           $ref: "#/components/responses/forbidden"
 
-        "404":
-          $ref: "#/components/responses/notFound"
+        "401":
+          $ref: "#/components/responses/unauthenticated"
 
   /v1/shoppingLists/{userId}/{shoppingListId}:
     put:
@@ -125,10 +122,13 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
+        "401":
+          $ref: "#/components/responses/unauthenticated"
+
     delete:
       operationId: deleteShoppingList
       summary: Delete existing shopping list for user.
-      description: Delete new shopping list for user by analyzing received recipes.
+      description: Delete new shopping list for user.
       tags:
         - ShoppingLists
       parameters:
@@ -160,6 +160,9 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
+        "401":
+          $ref: "#/components/responses/unauthenticated"
+
   /v1/recipes/{userId}:
     get:
       operationId: getRecipesForUser
@@ -188,8 +191,43 @@ paths:
         "403":
           $ref: "#/components/responses/forbidden"
 
-        "404":
-          $ref: "#/components/responses/notFound"
+        "401":
+          $ref: "#/components/responses/unauthenticated"
+
+    post:
+      operationId: createRecipesForUser
+      summary: Create new recipes for user.
+      description: Create new recipes for user.
+      tags:
+        - Recipes
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+      requestBody:
+        description: Newly created recipe
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/recipeBase"
+      responses:
+
+        "201":
+          description: The item has been created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/recipe"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
+
+        "401":
+          $ref: "#/components/responses/unauthenticated"
 
   /v1/recipes/publicRecipes:
     get:
@@ -209,8 +247,8 @@ paths:
                 items:
                   $ref: "#/components/schemas/recipe"
 
-        "404":
-          $ref: "#/components/responses/notFound"
+        "401":
+          $ref: "#/components/responses/unauthenticated"
 
   /v1/constants/units:
     get:
@@ -229,6 +267,9 @@ paths:
                 items:
                   type: string
 
+        "401":
+          $ref: "#/components/responses/unauthenticated"
+
 
   /v1/constants/categories:
     get:
@@ -246,6 +287,9 @@ paths:
                 type: array
                 items:
                   type: string
+
+        "401":
+          $ref: "#/components/responses/unauthenticated"
 
 components:
 
@@ -390,6 +434,13 @@ components:
 
     notFound:
       description: "The requested resource could not be found"
+      content:
+        application/json:
+          schema:
+            type: string
+
+    unauthenticated:
+      description: "The client is not authenticated."
       content:
         application/json:
           schema:

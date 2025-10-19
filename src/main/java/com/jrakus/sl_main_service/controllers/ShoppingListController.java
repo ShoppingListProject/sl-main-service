@@ -40,7 +40,6 @@ public class ShoppingListController implements ShoppingListsApi {
 
     @Override
     public ResponseEntity<ShoppingList> createShoppingList(String userId, ShoppingListCreate newShoppingListRequest) {
-
         String newShoppingListName = newShoppingListRequest.getName();
         List<String> userRecipeIds = newShoppingListRequest.getUserRecipeIds();
         List<String> publicRecipeIds = newShoppingListRequest.getPublicRecipeIds();
