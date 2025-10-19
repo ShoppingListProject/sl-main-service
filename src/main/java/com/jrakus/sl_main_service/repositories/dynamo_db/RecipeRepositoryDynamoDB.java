@@ -102,6 +102,7 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
     public void saveRecipeForUser(String userId, Recipe recipe) {
 
         String pk = this.pkPrefix + userId;
+        String sk = this.skPrefix + recipe.getRecipeId();
 
         RecipeBase recipeBase = new RecipeBase()
                 .name(recipe.getName())
@@ -109,7 +110,7 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
                 .updatedAt(recipe.getUpdatedAt())
                 .items(recipe.getItems());
 
-        Map<String, AttributeValue> dynamoDBItem = recipeMapper.toDynamoDBItem(pk, this.skPrefix, recipeBase);
+        Map<String, AttributeValue> dynamoDBItem = recipeMapper.toDynamoDBItem(pk, sk, recipeBase);
         dynamoDBQueryHelper.saveSingleItem(dynamoDBItem);
     }
 

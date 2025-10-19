@@ -21,11 +21,11 @@ public class DynamoDBQueryHelper {
         this.tableName = dynamoDBProperties.getTableName();
     }
 
-    public QueryResponse queryUsingPKAndSKPrefix(String PK, String SKPrefix) {
+    public QueryResponse queryUsingPKAndSKPrefix(String pk, String skPrefix) {
 
         Map<String, AttributeValue> expressionValues = new HashMap<>();
-        expressionValues.put(":pk", AttributeValue.builder().s(PK).build());
-        expressionValues.put(":skPrefix", AttributeValue.builder().s(SKPrefix).build());
+        expressionValues.put(":pk", AttributeValue.builder().s(pk).build());
+        expressionValues.put(":skPrefix", AttributeValue.builder().s(skPrefix).build());
 
         String keyConditionExpression = "PK = :pk AND begins_with(SK, :skPrefix)";
 
@@ -38,14 +38,14 @@ public class DynamoDBQueryHelper {
         return ddb.query(queryRequest);
     }
 
-    public List<Map<String, AttributeValue>> getManyItems(String PK, List<String> listOfSK) {
+    public List<Map<String, AttributeValue>> getManyItems(String pk, List<String> listOfSk) {
 
         List<Map<String, AttributeValue>> keys = new ArrayList<>();
 
-        for(String SK: listOfSK) {
+        for(String sk: listOfSk) {
             Map<String, AttributeValue> key = Map.of(
-                "PK", AttributeValue.builder().s(PK).build(),
-                "SK", AttributeValue.builder().s(SK).build()
+                "PK", AttributeValue.builder().s(pk).build(),
+                "SK", AttributeValue.builder().s(sk).build()
             );
 
             keys.add(key);
