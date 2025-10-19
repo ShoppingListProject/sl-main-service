@@ -61,7 +61,7 @@ public class ShoppingListController implements ShoppingListsApi {
         // 1) Check if the element already exists
         // 2) Return the deleted item
 
-        shoppingListRepository.deleteShoppingList(userId, shoppingListId);
+        shoppingListRepository.deleteShoppingListForUser(userId, shoppingListId);
         return ResponseEntity.noContent().build();
     }
 

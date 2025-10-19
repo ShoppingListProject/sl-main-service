@@ -15,4 +15,6 @@ public interface RecipeRepository {
     List<Recipe> getSpecificRecipesForUser(String userId, List<String> recipeIds);
 
     void saveRecipeForUser(String userId, Recipe recipe);
+
+    void deleteRecipeForUser(String userId, String recipeId);
 }

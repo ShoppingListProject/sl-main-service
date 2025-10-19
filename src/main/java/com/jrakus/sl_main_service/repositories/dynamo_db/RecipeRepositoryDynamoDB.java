@@ -112,4 +112,13 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
         Map<String, AttributeValue> dynamoDBItem = recipeMapper.toDynamoDBItem(pk, this.skPrefix, recipeBase);
         dynamoDBQueryHelper.saveSingleItem(dynamoDBItem);
     }
+
+    @Override
+    public void deleteRecipeForUser(String userId, String recipeId) {
+
+        String pk = this.pkGlobal + userId;
+        String sk = this.skPrefix + recipeId;
+
+        dynamoDBQueryHelper.deleteSingleItem(pk, sk);
+    }
 }

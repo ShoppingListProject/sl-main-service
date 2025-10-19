@@ -10,5 +10,5 @@ public interface ShoppingListRepository {
 
     void saveShoppingListForUser(String userId, ShoppingList shoppingList);
 
-    void deleteShoppingList(String userId, String shoppingListId);
+    void deleteShoppingListForUser(String userId, String shoppingListId);
 }

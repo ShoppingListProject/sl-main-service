@@ -75,7 +75,7 @@ paths:
     put:
       operationId: updateShoppingList
       summary: Update shopping list.
-      description: Update existing shopping list.
+      description: Update existing shopping list that has been created by specified user.
       tags:
         - ShoppingLists
       parameters:
@@ -94,7 +94,7 @@ paths:
             type: string
 
       requestBody:
-        description: Shopping List which will be modified
+        description: Updated shopping list
         required: true
         content:
           application/json:
@@ -118,8 +118,8 @@ paths:
 
     delete:
       operationId: deleteShoppingList
-      summary: Delete existing shopping list for user.
-      description: Delete new shopping list for user.
+      summary: Delete shopping list for user.
+      description: Delete existing shopping list that has been created by specified user.
       tags:
         - ShoppingLists
       parameters:
@@ -181,8 +181,8 @@ paths:
 
     post:
       operationId: createRecipesForUser
-      summary: Create new recipes for user.
-      description: Create new recipes for user.
+      summary: Create new recipe for user.
+      description: Create new recipe for user.
       tags:
         - Recipes
       parameters:
@@ -210,6 +210,80 @@ paths:
 
         "403":
           $ref: "#/components/responses/forbidden"
+
+  /v1/recipes/{userId}/{recipeId}:
+    delete:
+      operationId: removeRecipesForUser
+      summary: Remove recipe for user.
+      description: Remove existing recipe that has been created by specified user.
+      tags:
+        - Recipes
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+
+        - name: recipeId
+          in: path
+          required: true
+          description: The unique ID of the recipe.
+          schema:
+            type: string
+
+      responses:
+
+        "200":
+          description: The item has been deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/recipe"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
+
+    put:
+      operationId: updateRecipesForUser
+      summary: Update recipe for user.
+      description: Update existing recipe that has been created by specified user.
+      tags:
+        - Recipes
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+
+        - name: recipeId
+          in: path
+          required: true
+          description: The unique ID of the recipe.
+          schema:
+            type: string
+      requestBody:
+        description: Updated recipe
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/recipeBase"
+      responses:
+
+        "200":
+          description: The item has been deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/recipe"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
+
 
   /v1/recipes/publicRecipes:
     get:

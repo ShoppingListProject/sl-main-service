@@ -28,6 +28,14 @@ public class RecipeController implements RecipesApi {
     }
 
     @Override
+    public ResponseEntity<List<Recipe>> getPublicRecipes() {
+
+        List<Recipe> recipes = recipeRepository.getAllPublicRecipes();
+
+        return ResponseEntity.ok(recipes);
+    }
+
+    @Override
     public ResponseEntity<Recipe> createRecipesForUser(String userId, RecipeBase recipeBase) {
 
         String newRecipeId = UUID.randomUUID().toString();
@@ -39,16 +47,36 @@ public class RecipeController implements RecipesApi {
                 .name(recipeBase.getName())
                 .items(recipeBase.getItems());
 
-
         recipeRepository.saveRecipeForUser(userId, recipe);
-        return ResponseEntity.ok(recipe);
+        return ResponseEntity.status(201).body(recipe);
     }
 
     @Override
-    public ResponseEntity<List<Recipe>> getPublicRecipes() {
+    public ResponseEntity<Recipe> removeRecipesForUser(String userId, String recipeId) {
 
-        List<Recipe> recipes = recipeRepository.getAllPublicRecipes();
+        // TODO
+        // 1) Check if the element already exists
+        // 2) Return the deleted item
 
-        return ResponseEntity.ok(recipes);
+        recipeRepository.deleteRecipeForUser(userId, recipeId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Recipe> updateRecipesForUser(String userId, String recipeId, RecipeBase recipeBase) {
+
+        // TODO
+        // Check if the element already exists
+
+        Recipe recipe = new Recipe()
+                .recipeId(recipeId)
+                .name(recipeBase.getName())
+                .updatedAt(recipeBase.getUpdatedAt())
+                .createdAt(recipeBase.getCreatedAt())
+                .items(recipeBase.getItems());
+
+        recipeRepository.saveRecipeForUser(userId, recipe);
+
+        return ResponseEntity.ok(recipe);
     }
 }

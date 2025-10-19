@@ -55,7 +55,7 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
     }
 
     @Override
-    public void deleteShoppingList(String userId, String shoppingListId) {
+    public void deleteShoppingListForUser(String userId, String shoppingListId) {
         String pk = this.pkPrefix + userId;
         String sk = this.skPrefix + shoppingListId;
 
