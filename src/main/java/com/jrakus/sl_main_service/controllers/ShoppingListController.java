@@ -1,12 +1,13 @@
 package com.jrakus.sl_main_service.controllers;
 
 import com.jrakus.sl_main_service.controllers.utils.ShoppingListCreator;
+import com.jrakus.sl_main_service.repositories.RecipeRepository;
 import com.jrakus.sl_main_service.repositories.ShoppingListRepository;
-import jakarta.validation.Valid;
 import org.openapitools.api.ShoppingListsApi;
-import org.openapitools.model.NewShoppingListRequest;
 import org.openapitools.model.Recipe;
 import org.openapitools.model.ShoppingList;
+import org.openapitools.model.ShoppingListCreate;
+import org.openapitools.model.ShoppingListResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
@@ -15,13 +16,18 @@ import java.util.List;
 public class ShoppingListController implements ShoppingListsApi {
 
     private final ShoppingListRepository shoppingListRepository;
+    private final RecipeRepository recipeRepository;
+
     private final ShoppingListCreator shoppingListCreator;
 
     public ShoppingListController(
             ShoppingListRepository shoppingListRepository,
+            RecipeRepository recipeRepository,
             ShoppingListCreator shoppingListCreator
     ) {
         this.shoppingListRepository = shoppingListRepository;
+        this.recipeRepository = recipeRepository;
+
         this.shoppingListCreator = shoppingListCreator;
     }
 
@@ -29,19 +35,26 @@ public class ShoppingListController implements ShoppingListsApi {
     public ResponseEntity<List<ShoppingList>> getShoppingListsForUser(String userId) {
 
         List<ShoppingList> shoppingLists = shoppingListRepository.getShoppingListsForUser(userId);
-
         return ResponseEntity.ok(shoppingLists);
     }
 
     @Override
-    public ResponseEntity<ShoppingList> createShoppingList(String userId, NewShoppingListRequest newShoppingListRequest) {
+    public ResponseEntity<ShoppingListResponse> createShoppingList(String userId, ShoppingListCreate newShoppingListRequest) {
 
         String newShoppingListName = newShoppingListRequest.getName();
-        List<Recipe> recipes = newShoppingListRequest.getRecipes();
+        List<String> userRecipeIds = newShoppingListRequest.getUserRecipeIds();
+        List<String> publicRecipeIds = newShoppingListRequest.getPublicRecipeIds();
 
-        ShoppingList newShoppingList = shoppingListCreator.createShoppingList(newShoppingListName, recipes);
+        List<Recipe> recipes = recipeRepository.getSpecificRecipesForUser(userId, userRecipeIds);
+        List<Recipe> publicRecipes = recipeRepository.getSpecificPublicRecipes(publicRecipeIds);
 
-        return ResponseEntity.ok(newShoppingList);
+        recipes.addAll(publicRecipes);
+
+        ShoppingListResponse shoppingList = shoppingListCreator.createShoppingList(newShoppingListName, recipes);
+
+        shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
+
+        return ResponseEntity.status(201).body(shoppingList);
     }
 
     @Override

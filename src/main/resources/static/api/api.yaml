@@ -60,7 +60,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/newShoppingListRequest"
+              $ref: "#/components/schemas/shoppingListCreate"
 
       responses:
 
@@ -69,7 +69,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/shoppingList"
+                $ref: "#/components/schemas/shoppingListResponse"
 
         "409":
           $ref: "#/components/responses/alreadyExists"
@@ -112,8 +112,8 @@ paths:
 
       responses:
 
-        "201":
-          description: The item has been created
+        "200":
+          description: The item has been updated
           content:
             application/json:
               schema:
@@ -251,6 +251,16 @@ components:
 
   schemas:
 
+    shoppingListResponse:
+      allOf:
+        - $ref: "#/components/schemas/shoppingList"
+        - type: object
+          required:
+            - shoppingListId
+          properties:
+            shoppingListId:
+              type: string
+
     shoppingList:
       type: object
       required:
@@ -303,6 +313,16 @@ components:
         purchased:
           type: boolean
 
+    recipeResponse:
+      allOf:
+        - $ref: "#/components/schemas/recipe"
+        - type: object
+          required:
+            - recipeId
+          properties:
+            recipeId:
+              type: string
+
     recipe:
       type: object
       required:
@@ -342,19 +362,23 @@ components:
         category:
           type: string
 
-    newShoppingListRequest:
+    shoppingListCreate:
       type: object
       required:
         - name
-        - recipes
+        - userRecipeIds
+        - publicRecipeIds
       properties:
         name:
           type: string
-        recipes:
+        userRecipeIds:
           type: array
           items:
-            $ref: "#/components/schemas/recipe"
-
+            type: string
+        publicRecipeIds:
+          type: array
+          items:
+            type: string
 
   responses:
     forbidden:

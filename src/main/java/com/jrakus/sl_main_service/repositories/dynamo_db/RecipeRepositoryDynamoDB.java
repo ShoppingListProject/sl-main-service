@@ -1,17 +1,19 @@
 package com.jrakus.sl_main_service.repositories.dynamo_db;
 
-import com.jrakus.sl_main_service.repositories.RecipesRepository;
+import com.jrakus.sl_main_service.repositories.RecipeRepository;
 import com.jrakus.sl_main_service.repositories.dynamo_db.mapper.RecipeMapper;
 import com.jrakus.sl_main_service.repositories.dynamo_db.utils.DynamoDBQueryHelper;
 import org.openapitools.model.Recipe;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Repository
-public class RecipesRepositoryDynamoDB implements RecipesRepository {
+public class RecipeRepositoryDynamoDB implements RecipeRepository {
 
     private final DynamoDBQueryHelper dynamoDBQueryHelper;
     private final RecipeMapper recipeMapper;
@@ -21,7 +23,7 @@ public class RecipesRepositoryDynamoDB implements RecipesRepository {
     private final String pkPrefix = "USER#";
     private final String skPrefix = "RECIPE#";
 
-    public RecipesRepositoryDynamoDB(
+    public RecipeRepositoryDynamoDB(
             DynamoDBQueryHelper dynamoDBQueryHelper,
             RecipeMapper recipeMapper) {
         this.dynamoDBQueryHelper = dynamoDBQueryHelper;
@@ -40,6 +42,22 @@ public class RecipesRepositoryDynamoDB implements RecipesRepository {
     }
 
     @Override
+    public List<Recipe> getSpecificPublicRecipes(List<String> recipeIds) {
+        List<String> listOfSk = new ArrayList<>();
+
+        for(String recipeId: recipeIds) {
+            String sk = this.skPrefix + recipeId;
+            listOfSk.add(sk);
+        }
+
+        List<Map<String, AttributeValue>> queryResponse = dynamoDBQueryHelper.getManyItems(pkGlobal, listOfSk);
+
+        return queryResponse.stream()
+                .map(recipeMapper::fromDynamoDB)
+                .toList();
+    }
+
+    @Override
     public List<Recipe> getRecipesForUser(String userId) {
 
         String pk = pkPrefix + userId;
@@ -48,6 +66,23 @@ public class RecipesRepositoryDynamoDB implements RecipesRepository {
 
         return queryResponse.items()
                 .stream()
+                .map(recipeMapper::fromDynamoDB)
+                .toList();
+    }
+
+    @Override
+    public List<Recipe> getSpecificRecipesForUser(String userId, List<String> recipeIds) {
+        String pk = pkPrefix + userId;
+        List<String> listOfSk = new ArrayList<>();
+
+        for(String recipeId: recipeIds) {
+            String sk = this.skPrefix + recipeId;
+            listOfSk.add(sk);
+        }
+
+        List<Map<String, AttributeValue>> queryResponse = dynamoDBQueryHelper.getManyItems(pk, listOfSk);
+
+        return queryResponse.stream()
                 .map(recipeMapper::fromDynamoDB)
                 .toList();
     }

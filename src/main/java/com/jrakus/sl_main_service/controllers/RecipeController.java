@@ -1,6 +1,6 @@
 package com.jrakus.sl_main_service.controllers;
 
-import com.jrakus.sl_main_service.repositories.RecipesRepository;
+import com.jrakus.sl_main_service.repositories.RecipeRepository;
 import org.openapitools.api.RecipesApi;
 import org.openapitools.model.Recipe;
 import org.springframework.http.ResponseEntity;
@@ -11,16 +11,16 @@ import java.util.List;
 @RestController
 public class RecipeController implements RecipesApi {
 
-    private final RecipesRepository recipesRepository;
+    private final RecipeRepository recipeRepository;
 
-    public RecipeController(RecipesRepository recipesRepository) {
-        this.recipesRepository = recipesRepository;
+    public RecipeController(RecipeRepository recipesRepository) {
+        this.recipeRepository = recipesRepository;
     }
 
     @Override
     public ResponseEntity<List<Recipe>> getRecipesForUser(String userId) {
 
-        List<Recipe> recipes = recipesRepository.getRecipesForUser(userId);
+        List<Recipe> recipes = recipeRepository.getRecipesForUser(userId);
 
         return ResponseEntity.ok(recipes);
     }
@@ -28,7 +28,7 @@ public class RecipeController implements RecipesApi {
     @Override
     public ResponseEntity<List<Recipe>> getPublicRecipes() {
 
-        List<Recipe> recipes = recipesRepository.getAllPublicRecipes();
+        List<Recipe> recipes = recipeRepository.getAllPublicRecipes();
 
         return ResponseEntity.ok(recipes);
     }
