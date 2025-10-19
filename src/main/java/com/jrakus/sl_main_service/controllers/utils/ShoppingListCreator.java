@@ -9,11 +9,11 @@ import java.util.*;
 @Component
 public class ShoppingListCreator {
 
-    public ShoppingListResponse createShoppingList(String shoppingListName, List<Recipe> recipes) {
+    public ShoppingList createShoppingList(String shoppingListName, List<Recipe> recipes) {
 
         String newShoppingListId = UUID.randomUUID().toString();
 
-        ShoppingListResponse shoppingList = new ShoppingListResponse()
+        ShoppingList shoppingList = new ShoppingList()
                 .shoppingListId(newShoppingListId)
                 .name(shoppingListName)
                 .createdAt(OffsetDateTime.now())

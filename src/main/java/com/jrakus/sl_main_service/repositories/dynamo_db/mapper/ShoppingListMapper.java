@@ -20,6 +20,9 @@ public class ShoppingListMapper {
     public ShoppingList fromDynamoDBItem(Map<String, AttributeValue> item) {
         ShoppingList shoppingList = new ShoppingList();
 
+        String shoppingListId = item.get("SK").s().split("#")[1];
+
+        shoppingList.setShoppingListId(shoppingListId);
         shoppingList.setName(item.get("name").s());
         shoppingList.setCreatedAt(OffsetDateTime.parse(item.get("createdAt").s()));
         shoppingList.setUpdatedAt(OffsetDateTime.parse(item.get("updatedAt").s()));

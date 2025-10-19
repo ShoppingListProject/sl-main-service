@@ -7,7 +7,6 @@ import org.openapitools.api.ShoppingListsApi;
 import org.openapitools.model.Recipe;
 import org.openapitools.model.ShoppingList;
 import org.openapitools.model.ShoppingListCreate;
-import org.openapitools.model.ShoppingListResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
@@ -39,7 +38,7 @@ public class ShoppingListController implements ShoppingListsApi {
     }
 
     @Override
-    public ResponseEntity<ShoppingListResponse> createShoppingList(String userId, ShoppingListCreate newShoppingListRequest) {
+    public ResponseEntity<ShoppingList> createShoppingList(String userId, ShoppingListCreate newShoppingListRequest) {
 
         String newShoppingListName = newShoppingListRequest.getName();
         List<String> userRecipeIds = newShoppingListRequest.getUserRecipeIds();
@@ -47,11 +46,9 @@ public class ShoppingListController implements ShoppingListsApi {
 
         List<Recipe> recipes = recipeRepository.getSpecificRecipesForUser(userId, userRecipeIds);
         List<Recipe> publicRecipes = recipeRepository.getSpecificPublicRecipes(publicRecipeIds);
-
         recipes.addAll(publicRecipes);
 
-        ShoppingListResponse shoppingList = shoppingListCreator.createShoppingList(newShoppingListName, recipes);
-
+        ShoppingList shoppingList = shoppingListCreator.createShoppingList(newShoppingListName, recipes);
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
 
         return ResponseEntity.status(201).body(shoppingList);

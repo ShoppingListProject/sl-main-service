@@ -43,6 +43,11 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
 
     @Override
     public List<Recipe> getSpecificPublicRecipes(List<String> recipeIds) {
+
+        if(recipeIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
         List<String> listOfSk = new ArrayList<>();
 
         for(String recipeId: recipeIds) {
@@ -72,6 +77,11 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
 
     @Override
     public List<Recipe> getSpecificRecipesForUser(String userId, List<String> recipeIds) {
+
+        if(recipeIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
         String pk = pkPrefix + userId;
         List<String> listOfSk = new ArrayList<>();
 

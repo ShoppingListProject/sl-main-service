@@ -69,7 +69,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/shoppingListResponse"
+                $ref: "#/components/schemas/shoppingList"
 
         "409":
           $ref: "#/components/responses/alreadyExists"
@@ -251,9 +251,9 @@ components:
 
   schemas:
 
-    shoppingListResponse:
+    shoppingList:
       allOf:
-        - $ref: "#/components/schemas/shoppingList"
+        - $ref: "#/components/schemas/shoppingListBase"
         - type: object
           required:
             - shoppingListId
@@ -261,7 +261,7 @@ components:
             shoppingListId:
               type: string
 
-    shoppingList:
+    shoppingListBase:
       type: object
       required:
         - name
@@ -313,9 +313,9 @@ components:
         purchased:
           type: boolean
 
-    recipeResponse:
+    recipe:
       allOf:
-        - $ref: "#/components/schemas/recipe"
+        - $ref: "#/components/schemas/recipeBase"
         - type: object
           required:
             - recipeId
@@ -323,7 +323,7 @@ components:
             recipeId:
               type: string
 
-    recipe:
+    recipeBase:
       type: object
       required:
         - name

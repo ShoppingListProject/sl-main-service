@@ -20,6 +20,9 @@ public class RecipeMapper {
 
         Recipe recipe = new Recipe();
 
+        String recipeId = item.get("SK").s().split("#")[1];
+
+        recipe.setRecipeId(recipeId);
         recipe.setName(item.get("name").s());
         recipe.setCreatedAt(OffsetDateTime.parse(item.get("createdAt").s()));
         recipe.setUpdatedAt(OffsetDateTime.parse(item.get("updatedAt").s()));
