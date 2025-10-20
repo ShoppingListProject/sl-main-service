@@ -15,6 +15,9 @@ aws:
   accessKeyId: fakeKeyId
   secretKey: fakeKey
 
+cors:
+  trustOrigin: http://localhost:5173
+
 constants:
   units:
     - g
