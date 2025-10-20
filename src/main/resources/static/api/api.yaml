@@ -3,10 +3,6 @@ info:
   title: Shopping List Main Service
   version: 1.0.0
 
-servers:
-  - url: /api
-    description: Global base path for all endpoints
-
 paths:
 
   /api/v1/shoppingLists/{userId}:
