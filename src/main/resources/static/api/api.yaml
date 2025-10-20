@@ -3,9 +3,13 @@ info:
   title: Shopping List Main Service
   version: 1.0.0
 
+servers:
+  - url: /api
+    description: Global base path for all endpoints
+
 paths:
 
-  /v1/shoppingLists/{userId}:
+  /api/v1/shoppingLists/{userId}:
     get:
       operationId: getShoppingListsForUser
       summary: Retrieve all shopping lists for user.
@@ -71,7 +75,7 @@ paths:
         "403":
           $ref: "#/components/responses/forbidden"
 
-  /v1/shoppingLists/{userId}/{shoppingListId}:
+  /api/v1/shoppingLists/{userId}/{shoppingListId}:
     put:
       operationId: updateShoppingList
       summary: Update shopping list.
@@ -151,7 +155,7 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
-  /v1/recipes/{userId}:
+  /api/v1/recipes/{userId}:
     get:
       operationId: getRecipesForUser
       summary: Retrieve all recipes for user.
@@ -211,7 +215,7 @@ paths:
         "403":
           $ref: "#/components/responses/forbidden"
 
-  /v1/recipes/{userId}/{recipeId}:
+  /api/v1/recipes/{userId}/{recipeId}:
     delete:
       operationId: removeRecipesForUser
       summary: Remove recipe for user.
@@ -285,7 +289,7 @@ paths:
           $ref: "#/components/responses/forbidden"
 
 
-  /v1/recipes/publicRecipes:
+  /api/v1/recipes/publicRecipes:
     get:
       operationId: getPublicRecipes
       summary: Retrieve all public recipes.
@@ -303,7 +307,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/recipe"
 
-  /v1/constants/units:
+  /api/v1/constants/units:
     get:
       operationId: getAllUnits
       tags:
@@ -320,7 +324,7 @@ paths:
                 items:
                   type: string
 
-  /v1/constants/categories:
+  /api/v1/constants/categories:
     get:
       operationId: getAllCategories
       tags:
