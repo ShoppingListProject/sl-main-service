@@ -11,6 +11,7 @@ import org.openapitools.model.ShoppingListCreate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,12 +77,13 @@ public class ShoppingListController implements ShoppingListsApi {
 
         // TODO
         // Check if the element already exists
+        // Do not update createdAt field - Reuse the value taken from DB
 
         ShoppingList shoppingList = new ShoppingList()
                 .shoppingListId(shoppingListId)
                 .name(shoppingListBase.getName())
-                .updatedAt(shoppingListBase.getUpdatedAt())
-                .createdAt(shoppingListBase.getCreatedAt())
+                .updatedAt(OffsetDateTime.now())
+                .createdAt(OffsetDateTime.now())
                 .itemsPerCategory(shoppingListBase.getItemsPerCategory());
 
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);

@@ -347,26 +347,26 @@ components:
         - type: object
           required:
             - shoppingListId
+            - updatedAt
+            - createdAt
           properties:
             shoppingListId:
               type: string
+            updatedAt:
+              type: string
+              format: date-time
+            createdAt:
+              type: string
+              format: date-time
 
     shoppingListBase:
       type: object
       required:
         - name
-        - updatedAt
-        - createdAt
         - itemsPerCategory
       properties:
         name:
           type: string
-        updatedAt:
-          type: string
-          format: date-time
-        createdAt:
-          type: string
-          format: date-time
         itemsPerCategory:
           type: array
           items:

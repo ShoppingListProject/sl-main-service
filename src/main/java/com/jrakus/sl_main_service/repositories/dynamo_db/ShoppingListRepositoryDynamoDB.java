@@ -44,13 +44,7 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
         String pk = this.pkPrefix + userId;
         String sk = this.skPrefix + shoppingList.getShoppingListId();
 
-        ShoppingListBase shoppingListBase = new ShoppingListBase()
-                .name(shoppingList.getName())
-                .createdAt(shoppingList.getCreatedAt())
-                .updatedAt(shoppingList.getUpdatedAt())
-                .itemsPerCategory(shoppingList.getItemsPerCategory());
-
-        Map<String, AttributeValue> dynamoDBItem = shoppingListMapper.toDynamoDBItem(pk, sk, shoppingListBase);
+        Map<String, AttributeValue> dynamoDBItem = shoppingListMapper.toDynamoDBItem(pk, sk, shoppingList);
         dynamoDBQueryHelper.saveSingleItem(dynamoDBItem);
     }
 
