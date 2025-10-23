@@ -409,26 +409,26 @@ components:
         - type: object
           required:
             - recipeId
+            - updatedAt
+            - createdAt
           properties:
             recipeId:
               type: string
+            updatedAt:
+              type: string
+              format: date-time
+            createdAt:
+              type: string
+              format: date-time
 
     recipeBase:
       type: object
       required:
         - name
-        - updatedAt
-        - createdAt
         - items
       properties:
         name:
           type: string
-        updatedAt:
-          type: string
-          format: date-time
-        createdAt:
-          type: string
-          format: date-time
         items:
           type: array
           items:

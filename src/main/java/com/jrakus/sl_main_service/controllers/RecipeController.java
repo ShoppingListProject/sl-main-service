@@ -7,6 +7,7 @@ import org.openapitools.model.RecipeBase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,8 +43,8 @@ public class RecipeController implements RecipesApi {
 
         Recipe recipe = new Recipe()
                 .recipeId(newRecipeId)
-                .createdAt(recipeBase.getCreatedAt())
-                .updatedAt(recipeBase.getUpdatedAt())
+                .createdAt(OffsetDateTime.now())
+                .updatedAt(OffsetDateTime.now())
                 .name(recipeBase.getName())
                 .items(recipeBase.getItems());
 
@@ -67,12 +68,13 @@ public class RecipeController implements RecipesApi {
 
         // TODO
         // Check if the element already exists
+        // Do not update createAt - use the previous value taken from DB
 
         Recipe recipe = new Recipe()
                 .recipeId(recipeId)
                 .name(recipeBase.getName())
-                .updatedAt(recipeBase.getUpdatedAt())
-                .createdAt(recipeBase.getCreatedAt())
+                .updatedAt(OffsetDateTime.now())
+                .createdAt(OffsetDateTime.now())
                 .items(recipeBase.getItems());
 
         recipeRepository.saveRecipeForUser(userId, recipe);
