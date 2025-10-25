@@ -5,9 +5,7 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
-    "generate": "npx openapi-generator-cli generate -i ../../src/main/resources/static/api/api.yaml -g typescript-fetch -o ./generated --global-property='models,supportingFiles'",
-    "compile": "npx tsc",
-    "release": "npm version patch && npm publish --access public"
+    "generate": "npx openapi-generator-cli generate -i ../../src/main/resources/static/api/api.yaml -g typescript-fetch -o ./generated --global-property='models,supportingFiles'"
   },
   "author": "Jakub",
   "license": "ISC",

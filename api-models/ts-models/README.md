@@ -2,22 +2,27 @@
 
 To publish new version of API Models follow below steps:
 
-1) Install dependencies
+#### 1. Install dependencies
 ```bash
   npm install
 ```
 
-2) Generate models from OpenAPI spec
+#### 2. Generate models from OpenAPI spec
 ```bash
   npm run generate
 ```
 
-3) Compile file from ts to js
+#### 3. Compile file from ts to js
 ```bash
-  npm run compile
+  npx tsc
 ```
 
-4) Publish new version
+#### 4. Update package version
 ```bash
-  npm run release
+  npm version patch
+```
+
+#### 5. Publish new version
+```bash
+  npm publish --access public
 ```
