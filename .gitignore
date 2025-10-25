@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Node ###
+node_modules/
+
+### API Models ###
+api-models/ts-models/generated/
+api-models/ts-models/dist/

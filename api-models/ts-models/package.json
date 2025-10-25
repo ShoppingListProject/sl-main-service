@@ -1,0 +1,18 @@
+{
+  "name": "@shopping-list-project/sl-api-models",
+  "version": "1.0.0",
+  "description": "All models used by sl-main-service API.",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "generate": "npx openapi-generator-cli generate -i ../../src/main/resources/static/api/api.yaml -g typescript-fetch -o ./generated --global-property='models,supportingFiles'",
+    "compile": "npx tsc",
+    "publish": "npm publish --access public"
+  },
+  "author": "Jakub",
+  "license": "ISC",
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.25.0",
+    "typescript": "^5.9.3"
+  }
+}
