@@ -26,3 +26,5 @@ To publish new version of API Models follow below steps:
 ```bash
   npm publish --access public
 ```
+
+#### 6. Commit newest changes
