@@ -3,6 +3,271 @@
     {
       "PutRequest": {
         "Item": {
+          "PK": {"S":  "USER#37d4d38e-e304-43ab-978d-da6b8495d7f6"},
+          "SK": {"S":  "SHOPPING_LIST#4387710c-f74b-463d-b294-052c1b401734"},
+          "createdAt": {"S":  "2025-09-27T15:16:05.951250500Z"},
+          "updatedAt": {"S":  "2025-09-27T15:16:05.951250500Z"},
+          "name": {"S":  "Weekend Shopping List"},
+          "itemsPerCategory": {
+            "L":[
+              {
+                "M": {
+                  "category": {"S": "Vegetables & Fruits"},
+                  "items": {
+                    "L": [
+                      {
+                        "M": {
+                          "name": {"S": "Bananas"},
+                          "quantity": {"N": "6"},
+                          "unit": {"S": "pieces"},
+                          "purchased": {"BOOL": false}
+                        }
+                      },
+                      {
+                        "M": {
+                          "name": {"S": "Tomatoes"},
+                          "quantity": {"N": "500"},
+                          "unit": {"S": "g"},
+                          "purchased": {"BOOL": false}
+                        }
+                      },
+                      {
+                        "M": {
+                          "name": {"S": "Apples"},
+                          "quantity": {"N": "4"},
+                          "unit": {"S": "pieces"},
+                          "purchased": {"BOOL": false}
+                        }
+                      },
+                      {
+                        "M": {
+                          "name": {"S": "Carrots"},
+                          "quantity": {"N": "300"},
+                          "unit": {"S": "g"},
+                          "purchased": {"BOOL": false}
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "M": {
+                  "category": {"S": "Bread"},
+                  "items": {
+                    "L": [
+                      {
+                        "M": {
+                          "name": {"S": "Whole Wheat Bread"},
+                          "quantity": {"N": "1"},
+                          "unit": {"S": "pieces"},
+                          "purchased": {"BOOL": false}
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "M": {
+                  "category": {"S": "Dairy & Eggs"},
+                  "items": {
+                    "L": [
+                      {
+                        "M": {
+                          "name": {"S": "Milk"},
+                          "quantity": {"N": "1"},
+                          "unit": {"S": "l"},
+                          "purchased": {"BOOL": false}
+                        }
+                      },
+                      {
+                        "M": {
+                          "name": {"S": "Cheddar Cheese"},
+                          "quantity": {"N": "200"},
+                          "unit": {"S": "g"},
+                          "purchased": {"BOOL": false}
+                        }
+                      },
+                      {
+                        "M": {
+                          "name": {"S": "Yogurt"},
+                          "quantity": {"N": "500"},
+                          "unit": {"S": "ml"},
+                          "purchased": {"BOOL": false}
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "M": {
+                  "category": {"S": "Beverages"},
+                  "items": {
+                    "L": [
+                      {
+                        "M": {
+                          "name": {"S": "Orange Juice"},
+                          "quantity": {"N": "1"},
+                          "unit": {"S": "l"},
+                          "purchased": {"BOOL": false}
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "M": {
+                  "category": {"S": "Pantry / Dry Goods"},
+                  "items": {
+                    "L": [
+                      {
+                        "M": {
+                          "name": {"S": "Rice"},
+                          "quantity": {"N": "1"},
+                          "unit": {"S": "kg"},
+                          "purchased": {"BOOL": false}
+                        }
+                      },
+                      {
+                        "M": {
+                          "name": {"S": "Coffee"},
+                          "quantity": {"N": "250"},
+                          "unit": {"S": "g"},
+                          "purchased": {"BOOL": false}
+                        }
+                      },
+                      {
+                        "M": {
+                          "name": {"S": "Olive Oil"},
+                          "quantity": {"N": "750"},
+                          "unit": {"S": "ml"},
+                          "purchased": {"BOOL": false}
+                        }
+                      },
+                      {
+                        "M": {
+                          "name": {"S": "Peanut Butter"},
+                          "quantity": {"N": "250"},
+                          "unit": {"S": "g"},
+                          "purchased": {"BOOL": false}
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "M": {
+                  "category": {"S": "Personal Care"},
+                  "items": {
+                    "L": [
+                      {
+                        "M": {
+                          "name": {"S": "Shampoo"},
+                          "quantity": {"N": "1"},
+                          "unit": {"S": "pieces"},
+                          "purchased": {"BOOL": false}
+                        }
+                      },
+                      {
+                        "M": {
+                          "name": {"S": "Toothpaste"},
+                          "quantity": {"N": "1"},
+                          "unit": {"S": "pieces"},
+                          "purchased": {"BOOL": false}
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "M": {
+                  "category": {"S": "Cleaning"},
+                  "items": {
+                    "L": [
+                      {
+                        "M": {
+                          "name": {"S": "Detergent"},
+                          "quantity": {"N": "500"},
+                          "unit": {"S": "ml"},
+                          "purchased": {"BOOL": false}
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "M": {
+                  "category": {"S": "Snacks"},
+                  "items": {
+                    "L": [
+                      {
+                        "M": {
+                          "name": {"S": "Chocolate Bar"},
+                          "quantity": {"N": "3"},
+                          "unit": {"S": "pieces"},
+                          "purchased": {"BOOL": false}
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "M": {
+                  "category": {"S": "Spices"},
+                  "items": {
+                    "L": [
+                      {
+                        "M": {
+                          "name": {"S": "Salt"},
+                          "quantity": {"N": "2"},
+                          "unit": {"S": "teaspoons"},
+                          "purchased": {"BOOL": false}
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "M": {
+                  "category": {"S": "Meat"},
+                  "items": {
+                    "L": [
+                      {
+                        "M": {
+                          "name": {"S": "Minced Meat"},
+                          "quantity": {"N": "0.5"},
+                          "unit": {"S": "kg"},
+                          "purchased": {"BOOL": false}
+                        }
+                      },
+                      {
+                        "M": {
+                          "name": {"S": "Chicken Breast"},
+                          "quantity": {"N": "1"},
+                          "unit": {"S": "kg"},
+                          "purchased": {"BOOL": false}
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
           "PK": {"S": "GLOBAL#RECIPES"},
           "SK": {"S": "RECIPE#d5413c10-e69b-4841-92f3-7f1152194387"},
           "createdAt": {"S":  "2025-09-27T15:16:05.951250500Z"},
@@ -54,7 +319,7 @@
                 "M": {
                   "name": { "S": "Garlic Clove" },
                   "quantity": { "N": "1" },
-                  "unit": { "S": "unit" },
+                  "unit": { "S": "pieces" },
                   "category": { "S": "Vegetables & Fruits" }
                 }
               },
@@ -62,7 +327,7 @@
                 "M": {
                   "name": { "S": "Onion" },
                   "quantity": { "N": "1" },
-                  "unit": { "S": "unit" },
+                  "unit": { "S": "pieces" },
                   "category": { "S": "Vegetables & Fruits" }
                 }
               },
@@ -110,7 +375,7 @@
                 "M": {
                   "name": { "S": "Basil Leaves" },
                   "quantity": { "N": "5" },
-                  "unit": { "S": "units" },
+                  "unit": { "S": "pieces" },
                   "category": { "S": "Vegetables & Fruits" }
                 }
               }
