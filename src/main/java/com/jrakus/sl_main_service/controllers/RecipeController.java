@@ -3,7 +3,8 @@ package com.jrakus.sl_main_service.controllers;
 import com.jrakus.sl_main_service.repositories.RecipeRepository;
 import org.openapitools.api.RecipesApi;
 import org.openapitools.model.Recipe;
-import org.openapitools.model.RecipeBase;
+import org.openapitools.model.RecipeCreate;
+import org.openapitools.model.RecipeUpdate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +38,7 @@ public class RecipeController implements RecipesApi {
     }
 
     @Override
-    public ResponseEntity<Recipe> createRecipesForUser(String userId, RecipeBase recipeBase) {
+    public ResponseEntity<Recipe> createRecipesForUser(String userId, RecipeCreate recipeBase) {
 
         String newRecipeId = UUID.randomUUID().toString();
 
@@ -64,7 +65,7 @@ public class RecipeController implements RecipesApi {
     }
 
     @Override
-    public ResponseEntity<Recipe> updateRecipesForUser(String userId, String recipeId, RecipeBase recipeBase) {
+    public ResponseEntity<Recipe> updateRecipesForUser(String userId, String recipeId, RecipeUpdate recipeBase) {
 
         // TODO
         // Check if the element already exists

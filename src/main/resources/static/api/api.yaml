@@ -198,7 +198,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/recipeBase"
+              $ref: "#/components/schemas/recipeCreate"
       responses:
 
         "201":
@@ -271,11 +271,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/recipeBase"
+              $ref: "#/components/schemas/recipeUpdate"
       responses:
 
         "200":
-          description: The item has been deleted.
+          description: The item has been updated.
           content:
             application/json:
               schema:
@@ -405,15 +405,15 @@ components:
 
     recipe:
       allOf:
-        - $ref: "#/components/schemas/recipeBase"
+        - $ref: "#/components/schemas/recipeUpdate"
         - type: object
           required:
-            - recipeId
             - updatedAt
             - createdAt
+            - recipeId
+            - name
+            - items
           properties:
-            recipeId:
-              type: string
             updatedAt:
               type: string
               format: date-time
@@ -421,7 +421,19 @@ components:
               type: string
               format: date-time
 
-    recipeBase:
+    recipeUpdate:
+      allOf:
+        - $ref: "#/components/schemas/recipeCreate"
+        - type: object
+          required:
+            - recipeId
+            - name
+            - items
+          properties:
+            recipeId:
+              type: string
+
+    recipeCreate:
       type: object
       required:
         - name
