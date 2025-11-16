@@ -4,10 +4,8 @@ import com.jrakus.sl_main_service.controllers.utils.ShoppingListCreator;
 import com.jrakus.sl_main_service.repositories.RecipeRepository;
 import com.jrakus.sl_main_service.repositories.ShoppingListRepository;
 import org.openapitools.api.ShoppingListsApi;
-import org.openapitools.model.Recipe;
+import org.openapitools.model.*;
 import org.openapitools.model.ShoppingList;
-import org.openapitools.model.ShoppingListBase;
-import org.openapitools.model.ShoppingListCreate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,7 +40,7 @@ public class ShoppingListController implements ShoppingListsApi {
     }
 
     @Override
-    public ResponseEntity<ShoppingList> createShoppingList(String userId, ShoppingListCreate newShoppingListRequest) {
+    public ResponseEntity<ShoppingList> createShoppingList(String userId, ShoppingListCreateFromRecipes newShoppingListRequest) {
         String newShoppingListName = newShoppingListRequest.getName();
         List<String> userRecipeIds = newShoppingListRequest.getUserRecipeIds();
         List<String> publicRecipeIds = newShoppingListRequest.getPublicRecipeIds();
@@ -72,7 +70,7 @@ public class ShoppingListController implements ShoppingListsApi {
 
     @Override
     public ResponseEntity<ShoppingList> updateShoppingList(
-            String userId, String shoppingListId, ShoppingListBase shoppingListBase
+            String userId, String shoppingListId, ShoppingListUpdate shoppingListBase
     ) {
 
         // TODO

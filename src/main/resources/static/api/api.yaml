@@ -57,7 +57,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/shoppingListCreate"
+              $ref: "#/components/schemas/shoppingListCreateFromRecipes"
 
       responses:
 
@@ -99,7 +99,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/shoppingListBase"
+              $ref: "#/components/schemas/shoppingListUpdate"
 
       responses:
 
@@ -343,15 +343,15 @@ components:
 
     shoppingList:
       allOf:
-        - $ref: "#/components/schemas/shoppingListBase"
+        - $ref: "#/components/schemas/shoppingListUpdate"
         - type: object
           required:
-            - shoppingListId
             - updatedAt
             - createdAt
+            - shoppingListId
+            - name
+            - itemsPerCategory
           properties:
-            shoppingListId:
-              type: string
             updatedAt:
               type: string
               format: date-time
@@ -359,7 +359,19 @@ components:
               type: string
               format: date-time
 
-    shoppingListBase:
+    shoppingListUpdate:
+      allOf:
+        - $ref: "#/components/schemas/shoppingListCreate"
+        - type: object
+          required:
+            - shoppingListId
+            - name
+            - itemsPerCategory
+          properties:
+            shoppingListId:
+              type: string
+
+    shoppingListCreate:
       type: object
       required:
         - name
@@ -464,7 +476,7 @@ components:
         category:
           type: string
 
-    shoppingListCreate:
+    shoppingListCreateFromRecipes:
       type: object
       required:
         - name
