@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class ShoppingListController implements ShoppingListsApi {
@@ -40,7 +41,23 @@ public class ShoppingListController implements ShoppingListsApi {
     }
 
     @Override
-    public ResponseEntity<ShoppingList> createShoppingList(String userId, ShoppingListCreateFromRecipes newShoppingListRequest) {
+    public ResponseEntity<ShoppingList> createShoppingList(String userId, ShoppingListCreate shoppingListCreate) {
+
+        String newShoppingListId = UUID.randomUUID().toString();
+
+        ShoppingList shoppingList = new ShoppingList()
+                .shoppingListId(newShoppingListId)
+                .name(shoppingListCreate.getName())
+                .itemsPerCategory(shoppingListCreate.getItemsPerCategory())
+                .createdAt(OffsetDateTime.now())
+                .updatedAt(OffsetDateTime.now());
+
+        shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
+        return ResponseEntity.status(201).body(shoppingList);
+    }
+
+    @Override
+    public ResponseEntity<ShoppingList> createShoppingListFromRecipes(String userId, ShoppingListCreateFromRecipes newShoppingListRequest) {
         String newShoppingListName = newShoppingListRequest.getName();
         List<String> userRecipeIds = newShoppingListRequest.getUserRecipeIds();
         List<String> publicRecipeIds = newShoppingListRequest.getPublicRecipeIds();

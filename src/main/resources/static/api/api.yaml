@@ -49,15 +49,12 @@ paths:
             type: string
 
       requestBody:
-        description: |
-          An object with two required fields:
-          - Name for new shopping list
-          - Array of recipes which will be used to create a shopping list.
+        description: Newly created shopping list
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/shoppingListCreateFromRecipes"
+              $ref: "#/components/schemas/shoppingListCreate"
 
       responses:
 
@@ -150,6 +147,46 @@ paths:
 
         "404":
           $ref: "#/components/responses/notFound"
+
+  /api/vi/shoppingLists/fromRecipes/{userId}:
+    post:
+      operationId: createShoppingListFromRecipes
+      summary: Create new shopping list for user.
+      description: Create new shopping list for user by analyzing received recipes.
+      tags:
+        - ShoppingLists
+
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+
+      requestBody:
+        description: |
+          An object with three required fields:
+          - A name for new shopping list.
+          - An array of user recipes which will be used to create a shopping list.
+          - An array of public recipes which will be used to create a shopping list.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/shoppingListCreateFromRecipes"
+
+      responses:
+
+        "201":
+          description: The item has been created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/shoppingList"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
 
   /api/v1/recipes/{userId}:
     get:
