@@ -39,7 +39,7 @@ public class RecipeController implements RecipesApi {
     }
 
     @Override
-    public ResponseEntity<Recipe> createRecipesForUser(String userId, RecipeCreate recipeBase) {
+    public ResponseEntity<Recipe> createRecipeForUser(String userId, RecipeCreate recipeBase) {
 
         String newRecipeId = UUID.randomUUID().toString();
 
@@ -55,7 +55,7 @@ public class RecipeController implements RecipesApi {
     }
 
     @Override
-    public ResponseEntity<Recipe> removeRecipesForUser(String userId, String recipeId) {
+    public ResponseEntity<Recipe> removeRecipeForUser(String userId, String recipeId) {
 
         // TODO
         // 1) Add error message to body when 404 happens
@@ -70,7 +70,7 @@ public class RecipeController implements RecipesApi {
     }
 
     @Override
-    public ResponseEntity<Recipe> updateRecipesForUser(String userId, String recipeId, RecipeUpdate recipeBase) {
+    public ResponseEntity<Recipe> updateRecipeForUser(String userId, String recipeId, RecipeUpdate recipeBase) {
 
         // TODO
         // Check if the element already exists

@@ -217,7 +217,7 @@ paths:
           $ref: "#/components/responses/forbidden"
 
     post:
-      operationId: createRecipesForUser
+      operationId: createRecipeForUser
       summary: Create new recipe for user.
       description: Create new recipe for user.
       tags:
@@ -250,7 +250,7 @@ paths:
 
   /api/v1/recipes/{userId}/{recipeId}:
     delete:
-      operationId: removeRecipesForUser
+      operationId: removeRecipeForUser
       summary: Remove recipe for user.
       description: Remove existing recipe that has been created by specified user.
       tags:
@@ -283,7 +283,7 @@ paths:
           $ref: "#/components/responses/forbidden"
 
     put:
-      operationId: updateRecipesForUser
+      operationId: updateRecipeForUser
       summary: Update recipe for user.
       description: Update existing recipe that has been created by specified user.
       tags:
