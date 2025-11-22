@@ -57,13 +57,16 @@ public class RecipeController implements RecipesApi {
     @Override
     public ResponseEntity<Recipe> removeRecipesForUser(String userId, String recipeId) {
 
-        Optional<Recipe> optionalRecipe = recipeRepository.getUserRecipeById(userId, recipeId);
+        // TODO
+        // 1) Add error message to body when 404 happens
 
-        if(optionalRecipe.isEmpty())
+        Optional<Recipe> recipeOptional = recipeRepository.getUserRecipeById(userId, recipeId);
+
+        if(recipeOptional.isEmpty())
             return ResponseEntity.notFound().build();
 
         recipeRepository.deleteRecipeForUser(userId, recipeId);
-        return ResponseEntity.ok(optionalRecipe.get());
+        return ResponseEntity.ok(recipeOptional.get());
     }
 
     @Override

@@ -9,6 +9,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
@@ -35,6 +36,19 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
                 .stream()
                 .map(shoppingListMapper::fromDynamoDBItem)
                 .toList();
+    }
+
+    @Override
+    public Optional<ShoppingList> getUserShoppingListById(String userId, String shoppingListId) {
+        String pk = this.pkPrefix + userId;
+        String sk = this.skPrefix + shoppingListId;
+
+        Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, sk);
+
+        if(responseItem == null)
+            return Optional.empty();
+
+        return Optional.of(shoppingListMapper.fromDynamoDBItem(responseItem));
     }
 
     @Override

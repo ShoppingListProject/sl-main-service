@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -78,11 +79,16 @@ public class ShoppingListController implements ShoppingListsApi {
     public ResponseEntity<ShoppingList> deleteShoppingList(String userId, String shoppingListId) {
 
         // TODO
-        // 1) Check if the element already exists
-        // 2) Return the deleted item
+        // 1) Add error message to body when 404 happens
+
+        Optional<ShoppingList> shoppingListOptional =
+                shoppingListRepository.getUserShoppingListById(userId, shoppingListId);
+
+        if(shoppingListOptional.isEmpty())
+            return ResponseEntity.notFound().build();
 
         shoppingListRepository.deleteShoppingListForUser(userId, shoppingListId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(shoppingListOptional.get());
     }
 
     @Override
