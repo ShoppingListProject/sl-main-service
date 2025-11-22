@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -56,12 +57,13 @@ public class RecipeController implements RecipesApi {
     @Override
     public ResponseEntity<Recipe> removeRecipesForUser(String userId, String recipeId) {
 
-        // TODO
-        // 1) Check if the element already exists
-        // 2) Return the deleted item
+        Optional<Recipe> optionalRecipe = recipeRepository.getUserRecipeById(userId, recipeId);
+
+        if(optionalRecipe.isEmpty())
+            return ResponseEntity.notFound().build();
 
         recipeRepository.deleteRecipeForUser(userId, recipeId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(optionalRecipe.get());
     }
 
     @Override

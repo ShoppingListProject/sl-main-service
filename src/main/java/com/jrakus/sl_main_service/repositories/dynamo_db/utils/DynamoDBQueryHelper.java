@@ -65,6 +65,19 @@ public class DynamoDBQueryHelper {
         return response.responses().get(tableName);
     }
 
+    public Map<String, AttributeValue> getSingleItem(String pk, String sk) {
+        Map<String, AttributeValue> key = new HashMap<>();
+        key.put("PK", AttributeValue.builder().s(pk).build());
+        key.put("SK", AttributeValue.builder().s(sk).build());
+
+        GetItemRequest getRequest = GetItemRequest.builder()
+                .tableName(tableName)
+                .key(key)
+                .build();
+
+        return ddb.getItem(getRequest).item();
+    }
+
     public void deleteSingleItem(String pk, String sk) {
 
         Map<String, AttributeValue> key = new HashMap<>();

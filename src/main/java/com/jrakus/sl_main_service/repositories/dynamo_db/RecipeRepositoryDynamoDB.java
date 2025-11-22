@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class RecipeRepositoryDynamoDB implements RecipeRepository {
@@ -95,6 +96,20 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
         return queryResponse.stream()
                 .map(recipeMapper::fromDynamoDB)
                 .toList();
+    }
+
+    @Override
+    public Optional<Recipe> getUserRecipeById(String userId, String recipeId) {
+
+        String pk = this.pkPrefix + userId;
+        String sk = this.skPrefix + recipeId;
+
+        Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, sk);
+
+        if(responseItem == null)
+            return Optional.empty();
+
+        return Optional.of(recipeMapper.fromDynamoDB(responseItem));
     }
 
     @Override
