@@ -517,19 +517,30 @@ components:
       type: object
       required:
         - name
-        - userRecipeIds
-        - publicRecipeIds
+        - userRecipeArray
+        - publicRecipeArray
       properties:
         name:
           type: string
-        userRecipeIds:
+        userRecipeArray:
           type: array
           items:
-            type: string
-        publicRecipeIds:
+            type: recipeIdWithNumber
+        publicRecipeArray:
           type: array
           items:
-            type: string
+            type: recipeIdWithNumber
+
+    recipeIdWithNumber:
+      type: object
+      required:
+        - recipeId
+        - amount
+      properties:
+        recipeId:
+          type: string
+        amount:
+          type: integer
 
   responses:
     forbidden:

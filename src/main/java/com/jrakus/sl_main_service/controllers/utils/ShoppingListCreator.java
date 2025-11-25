@@ -25,6 +25,78 @@ public class ShoppingListCreator {
         return shoppingList;
     }
 
+    public List<Recipe> prepareRecipes(
+            List<Recipe> userRecipes,
+            List<Recipe> publicRecipes,
+            List<RecipeIdWithNumber> userRecipeArray,
+            List<RecipeIdWithNumber> publicRecipeArray) {
+
+        // We need to sort items because user could return it in any order, so did DynamoDB.
+        sortRecipeArrays(userRecipes, publicRecipes, userRecipeArray, publicRecipeArray);
+
+        Map<Recipe, Integer> recipeToAmount = createMapFromRecipeToAmount(
+                userRecipes, publicRecipes, userRecipeArray, publicRecipeArray
+        );
+
+        return createRecipesWithCorrectAmountOfItems(recipeToAmount);
+    };
+
+    private void sortRecipeArrays(
+            List<Recipe> userRecipes,
+            List<Recipe> publicRecipes,
+            List<RecipeIdWithNumber> userRecipeArray,
+            List<RecipeIdWithNumber> publicRecipeArray
+    ) {
+        userRecipes.sort(Comparator.comparing(Recipe::getRecipeId));
+        publicRecipes.sort(Comparator.comparing(Recipe::getRecipeId));
+        userRecipeArray.sort(Comparator.comparing(RecipeIdWithNumber::getRecipeId));
+        publicRecipeArray.sort(Comparator.comparing(RecipeIdWithNumber::getRecipeId));
+    }
+
+    private Map<Recipe, Integer> createMapFromRecipeToAmount(
+            List<Recipe> userRecipes,
+            List<Recipe> publicRecipes,
+            List<RecipeIdWithNumber> userRecipeArray,
+            List<RecipeIdWithNumber> publicRecipeArray
+    ) {
+
+        Map<Recipe, Integer> recipeToAmount = new HashMap<>();
+
+        // As we have sorted items, and we are sure that their lengths are equal we can easily match Recipe to amount
+        for(int index = 0; index < userRecipes.size(); index++) {
+
+            Recipe recipe = userRecipes.get(index);
+            int amount = userRecipeArray.get(index).getAmount();
+
+            recipeToAmount.put(recipe, amount);
+        }
+
+        for(int index = 0; index < publicRecipes.size(); index++) {
+
+            Recipe recipe = publicRecipes.get(index);
+            int amount = publicRecipeArray.get(index).getAmount();
+
+            recipeToAmount.put(recipe, amount);
+        }
+
+        return recipeToAmount;
+    }
+
+    private List<Recipe> createRecipesWithCorrectAmountOfItems(Map<Recipe, Integer> recipeToAmount) {
+
+        List<Recipe> allPreparedRecipes = new ArrayList<>(recipeToAmount.size());
+
+        for(Recipe unpreparedRecipe: recipeToAmount.keySet()) {
+
+            int amount = recipeToAmount.get(unpreparedRecipe);
+            Recipe preparedRecipe = multiplyRecipeByAmount(unpreparedRecipe, amount);
+
+            allPreparedRecipes.add(preparedRecipe);
+        }
+
+        return allPreparedRecipes;
+    }
+
     private List<CategorizedItems> getItemsPerCategory(List<Recipe> recipes) {
         Map<String, List<RecipeItem>> recipeItemsPerCategory = getRecipeItemsPerCategory(recipes);
 
@@ -70,6 +142,19 @@ public class ShoppingListCreator {
         }
 
         return recipeItemsPerCategory;
+    }
+
+    private Recipe multiplyRecipeByAmount(Recipe unpreparedRecipe, int amount) {
+
+        unpreparedRecipe.getItems().forEach(item -> {
+
+            float quantity = item.getQuantity() * amount;
+            float roundedQuantity =  Math.round(quantity * 100.0) / 100.0f;
+
+            item.setQuantity(roundedQuantity);
+        });
+
+        return unpreparedRecipe;
     }
 
     private List<String> getDistinctCategories(List<Recipe> recipes) {

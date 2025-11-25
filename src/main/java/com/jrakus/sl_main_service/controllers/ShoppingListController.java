@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -59,17 +58,32 @@ public class ShoppingListController implements ShoppingListsApi {
 
     @Override
     public ResponseEntity<ShoppingList> createShoppingListFromRecipes(String userId, ShoppingListCreateFromRecipes newShoppingListRequest) {
-        String newShoppingListName = newShoppingListRequest.getName();
-        List<String> userRecipeIds = newShoppingListRequest.getUserRecipeIds();
-        List<String> publicRecipeIds = newShoppingListRequest.getPublicRecipeIds();
+
+        List<RecipeIdWithNumber> userRecipeArray = newShoppingListRequest.getUserRecipeArray();
+        List<RecipeIdWithNumber> publicRecipeArray = newShoppingListRequest.getPublicRecipeArray();
+
+        List<String> userRecipeIds = userRecipeArray.stream().map(
+                RecipeIdWithNumber::getRecipeId
+        ).toList();
+
+        List<String> publicRecipeIds = publicRecipeArray.stream().map(
+                RecipeIdWithNumber::getRecipeId
+        ).toList();
 
         List<Recipe> userRecipes = recipeRepository.getSpecificRecipesForUser(userId, userRecipeIds);
         List<Recipe> publicRecipes = recipeRepository.getSpecificPublicRecipes(publicRecipeIds);
 
-        List<Recipe> allRecipes = new ArrayList<>(userRecipes);
-        allRecipes.addAll(publicRecipes);
+        // TODO
+        // 1) Throw an error if some recipe couldn't be found.
+        // 2 ) Move the code responsible for preparing Recipes to separate class
 
-        ShoppingList shoppingList = shoppingListCreator.createShoppingList(newShoppingListName, allRecipes);
+        List<Recipe> allPreparedRecipes = shoppingListCreator.prepareRecipes(
+          userRecipes, publicRecipes, userRecipeArray, publicRecipeArray
+        );
+
+        String newShoppingListName = newShoppingListRequest.getName();
+
+        ShoppingList shoppingList = shoppingListCreator.createShoppingList(newShoppingListName, allPreparedRecipes);
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
 
         return ResponseEntity.status(201).body(shoppingList);
