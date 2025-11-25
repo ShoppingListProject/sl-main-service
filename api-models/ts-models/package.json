@@ -1,6 +1,6 @@
 {
   "name": "@shopping-list-project/sl-api-models",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "All models used by sl-main-service API.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
