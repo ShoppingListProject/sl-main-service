@@ -525,11 +525,11 @@ components:
         userRecipeArray:
           type: array
           items:
-            type: recipeIdWithNumber
+            $ref: "#/components/schemas/recipeIdWithNumber"
         publicRecipeArray:
           type: array
           items:
-            type: recipeIdWithNumber
+            $ref: "#/components/schemas/recipeIdWithNumber"
 
     recipeIdWithNumber:
       type: object
