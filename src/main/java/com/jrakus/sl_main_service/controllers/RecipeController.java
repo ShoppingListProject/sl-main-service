@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,19 +24,17 @@ public class RecipeController implements RecipesApi {
     }
 
     @Override
-    public ResponseEntity<List<Recipe>> getRecipesForUser(String userId) {
+    public ResponseEntity<List<Recipe>> getRecipesForUser(String userId, Integer offset, Integer limit, Boolean areGlobalRecipesIncluded, String querySearch) {
 
-        List<Recipe> recipes = recipeRepository.getRecipesForUser(userId);
+        List<Recipe> userRecipes = recipeRepository.getRecipesForUser(userId);
+        List<Recipe> allRecipes = new ArrayList<>(userRecipes);
 
-        return ResponseEntity.ok(recipes);
-    }
+        if(areGlobalRecipesIncluded) {
+            List<Recipe> publicRecipes = recipeRepository.getAllPublicRecipes();
+            allRecipes.addAll(publicRecipes);
+        }
 
-    @Override
-    public ResponseEntity<List<Recipe>> getPublicRecipes() {
-
-        List<Recipe> recipes = recipeRepository.getAllPublicRecipes();
-
-        return ResponseEntity.ok(recipes);
+        return ResponseEntity.ok(allRecipes);
     }
 
     @Override

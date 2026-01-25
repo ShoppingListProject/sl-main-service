@@ -192,16 +192,48 @@ paths:
     get:
       operationId: getRecipesForUser
       summary: Retrieve all recipes for user.
-      description: Retrieve all recipes that were created by specified user.
+      description: Retrieve all shopping lists that pass the filters provided by user.
       tags:
         - Recipes
       parameters:
+
         - name: userId
           in: path
           required: true
           description: The unique ID of the user.
           schema:
             type: string
+
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: The number of recipes to skip before sending them back.
+
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+          description: The number of recipes to return.
+
+        - name: arePublicRecipesIncluded
+          in: query
+          schema:
+            type: boolean
+            default: true
+          description: The boolean value that indicates if public recipes should be included.
+
+        - name: querySearch
+          in: query
+          schema:
+            type: string
+          description: Text pattern to search for in recipes. Only recipes containing this pattern will be returned.
+
       responses:
 
         "200":
@@ -320,25 +352,6 @@ paths:
 
         "403":
           $ref: "#/components/responses/forbidden"
-
-
-  /api/v1/recipes/publicRecipes:
-    get:
-      operationId: getPublicRecipes
-      summary: Retrieve all public recipes.
-      description: Retrieve all recipes that are public.
-      tags:
-        - Recipes
-      responses:
-
-        "200":
-          description: Everything went fine
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/recipe"
 
   /api/v1/constants/units:
     get:
@@ -487,6 +500,7 @@ components:
       required:
         - name
         - items
+        - isGlobal
       properties:
         name:
           type: string
@@ -494,6 +508,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/recipeItem"
+        isGlobal:
+          type: boolean
 
     recipeItem:
       type: object
