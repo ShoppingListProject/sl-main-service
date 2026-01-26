@@ -38,7 +38,7 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
 
         return queryResponse.items()
                 .stream()
-                .map(recipeMapper::fromDynamoDB)
+                .map(item -> recipeMapper.fromDynamoDB(item, true))
                 .toList();
     }
 
@@ -59,7 +59,7 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
         List<Map<String, AttributeValue>> queryResponse = dynamoDBQueryHelper.getManyItems(pkGlobal, listOfSk);
 
         return queryResponse.stream()
-                .map(recipeMapper::fromDynamoDB)
+                .map(item -> recipeMapper.fromDynamoDB(item, true))
                 .toList();
     }
 
@@ -72,7 +72,7 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
 
         return queryResponse.items()
                 .stream()
-                .map(recipeMapper::fromDynamoDB)
+                .map(item -> recipeMapper.fromDynamoDB(item, false))
                 .toList();
     }
 
@@ -94,7 +94,7 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
         List<Map<String, AttributeValue>> queryResponse = dynamoDBQueryHelper.getManyItems(pk, listOfSk);
 
         return queryResponse.stream()
-                .map(recipeMapper::fromDynamoDB)
+                .map(item -> recipeMapper.fromDynamoDB(item, false))
                 .toList();
     }
 
@@ -109,7 +109,7 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
         if(responseItem == null)
             return Optional.empty();
 
-        return Optional.of(recipeMapper.fromDynamoDB(responseItem));
+        return Optional.of(recipeMapper.fromDynamoDB(responseItem, false));
     }
 
     @Override

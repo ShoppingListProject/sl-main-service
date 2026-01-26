@@ -16,7 +16,7 @@ public class RecipeMapper {
     // ======== READ ========
     // ======================
 
-    public Recipe fromDynamoDB(Map<String, AttributeValue> item) {
+    public Recipe fromDynamoDB(Map<String, AttributeValue> item, boolean isPublic) {
 
         Recipe recipe = new Recipe();
 
@@ -27,6 +27,7 @@ public class RecipeMapper {
         recipe.setCreatedAt(OffsetDateTime.parse(item.get("createdAt").s()));
         recipe.setUpdatedAt(OffsetDateTime.parse(item.get("updatedAt").s()));
         recipe.setItems(mapToRecipeItems(item.get("items").l()));
+        recipe.setIsGlobal(isPublic);
 
         return recipe;
     }
