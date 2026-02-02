@@ -148,7 +148,7 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
-  /api/vi/shoppingLists/fromRecipes/{userId}:
+  /api/v1/shoppingLists/fromRecipes/{userId}:
     post:
       operationId: createShoppingListFromRecipes
       summary: Create new shopping list for user.
