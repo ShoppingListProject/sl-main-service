@@ -31,11 +31,16 @@ public class ShoppingListCreator {
             List<RecipeIdWithNumber> userRecipeArray,
             List<RecipeIdWithNumber> publicRecipeArray) {
 
+        List<Recipe> userRecipesMutableCopy = new ArrayList<>(userRecipes);
+        List<Recipe> publicRecipesMutableCopy = new ArrayList<>(publicRecipes);
+        List<RecipeIdWithNumber> userRecipeArrayMutableCopy = new ArrayList<>(userRecipeArray);
+        List<RecipeIdWithNumber> publicRecipeArrayMutableCopy = new ArrayList<>(publicRecipeArray);
+
         // We need to sort items because user could return it in any order, so did DynamoDB.
-        sortRecipeArrays(userRecipes, publicRecipes, userRecipeArray, publicRecipeArray);
+        sortRecipeArrays(userRecipesMutableCopy, publicRecipesMutableCopy, userRecipeArrayMutableCopy, publicRecipeArrayMutableCopy);
 
         Map<Recipe, Integer> recipeToAmount = createMapFromRecipeToAmount(
-                userRecipes, publicRecipes, userRecipeArray, publicRecipeArray
+                userRecipes, publicRecipesMutableCopy, userRecipeArrayMutableCopy, publicRecipeArrayMutableCopy
         );
 
         return createRecipesWithCorrectAmountOfItems(recipeToAmount);
