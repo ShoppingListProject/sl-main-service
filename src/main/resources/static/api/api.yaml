@@ -13,12 +13,37 @@ paths:
       tags:
         - ShoppingLists
       parameters:
+
         - name: userId
           in: path
           required: true
           description: The unique ID of the user.
           schema:
             type: string
+
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: The number of recipes to skip before sending them back.
+
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+          description: The number of recipes to return.
+
+        - name: querySearch
+          in: query
+          schema:
+            type: string
+          description: Text pattern to search for in recipes. Only recipes containing this pattern will be returned.
+
       responses:
 
         "200":

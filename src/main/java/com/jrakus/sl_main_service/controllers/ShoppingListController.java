@@ -34,11 +34,11 @@ public class ShoppingListController implements ShoppingListsApi {
     }
 
     @Override
-    public ResponseEntity<List<ShoppingList>> getShoppingListsForUser(String userId) {
-
+    public ResponseEntity<List<ShoppingList>> getShoppingListsForUser(String userId, Integer offset, Integer limit, String querySearch) {
         List<ShoppingList> shoppingLists = shoppingListRepository.getShoppingListsForUser(userId);
         return ResponseEntity.ok(shoppingLists);
     }
+
 
     @Override
     public ResponseEntity<ShoppingList> createShoppingList(String userId, ShoppingListCreate shoppingListCreate) {
