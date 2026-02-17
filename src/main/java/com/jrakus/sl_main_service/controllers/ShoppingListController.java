@@ -49,7 +49,12 @@ public class ShoppingListController implements ShoppingListsApi {
             ).toList();
         }
 
-        // TODO: handle errors thrown by subList method
+        if(offset >= shoppingListMetadataList.size())
+            return ResponseEntity.ok(List.of());
+
+        if(limit > shoppingListMetadataList.size())
+            limit = shoppingListMetadataList.size();
+
         List<ShoppingListInfo> partOfShoppingListMetadataList = shoppingListMetadataList.subList(offset, limit);
         List<ShoppingListInfo> sortedShoppingListMetadata = partOfShoppingListMetadataList.stream().sorted(
                 Comparator.comparing(ShoppingListInfo::getUpdatedAt)
