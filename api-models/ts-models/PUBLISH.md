@@ -14,6 +14,10 @@ To publish new version of API Models follow below steps:
   npm run generate
 ```
 
+#### 3. Update index.ts if:
+1. you added new models that require importing.
+1. you removed models that were imported previously.
+
 #### 4. Compile file from ts to js
 ```bash
   npx tsc

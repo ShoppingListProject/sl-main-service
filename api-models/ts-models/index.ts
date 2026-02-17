@@ -10,3 +10,5 @@ export * from './generated/models/CategorizedItems';
 export * from './generated/models/ShoppingListItem';
 
 export * from './generated/models/ShoppingListCreateFromRecipes';
+export * from './generated/models/NumberOfPages';
+export * from './generated/models/ShoppingListInfo';
