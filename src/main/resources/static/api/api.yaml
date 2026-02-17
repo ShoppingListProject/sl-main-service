@@ -256,6 +256,35 @@ paths:
         "403":
           $ref: "#/components/responses/forbidden"
 
+  /api/v1/shoppingLists/metadata/{userId}:
+    get:
+      operationId: getMetadata
+      summary: Get metadata for shopping lists
+      description: | 
+        Get shopping lists metadata for a specified user. The response contains information
+        about all shopping lists created by a specified user
+      tags:
+        - ShoppingLists
+      parameters:
+
+        - name: userId
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+
+      responses:
+
+        "200":
+          description: Everything went fine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/shoppingListsMetadata"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
 
   /api/v1/recipes/{userId}:
     get:
@@ -634,6 +663,26 @@ components:
       properties:
         numberOfPages:
           type: integer
+
+    shoppingListsMetadata:
+      type: array
+      items:
+        $ref: "#/components/schemas/shoppingListInfo"
+
+    shoppingListInfo:
+      type: object
+      required:
+        - shoppingListName
+        - id
+        - updatedAt
+      properties:
+        shoppingListName:
+          type: string
+        id:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
 
   responses:
     forbidden:

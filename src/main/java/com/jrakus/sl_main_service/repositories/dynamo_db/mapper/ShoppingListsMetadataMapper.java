@@ -1,6 +1,6 @@
 package com.jrakus.sl_main_service.repositories.dynamo_db.mapper;
 
-import com.jrakus.sl_main_service.repositories.dynamo_db.models.ShoppingListMetadata;
+import org.openapitools.model.ShoppingListInfo;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
@@ -17,24 +17,24 @@ public class ShoppingListsMetadataMapper {
     // ======== READ ========
     // ======================
 
-    public List<ShoppingListMetadata> fromDynamoDBItem(Map<String, AttributeValue> item) {
+    public List<ShoppingListInfo> fromDynamoDBItem(Map<String, AttributeValue> item) {
         return mapToShoppingListMetadataList(item.get("metadata").l());
     }
 
-    private List<ShoppingListMetadata> mapToShoppingListMetadataList(List<AttributeValue> items) {
+    private List<ShoppingListInfo> mapToShoppingListMetadataList(List<AttributeValue> items) {
         return items.stream()
                 .map(AttributeValue::m)
                 .map(this::mapToShoppingListMetadata)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private ShoppingListMetadata mapToShoppingListMetadata(Map<String, AttributeValue> item) {
+    private ShoppingListInfo mapToShoppingListMetadata(Map<String, AttributeValue> item) {
 
         String shoppingListName = item.get("shoppingListName").s();
         String id = item.get("id").s();
         OffsetDateTime updatedAt = OffsetDateTime.parse(item.get("updatedAt").s());
 
-        return new ShoppingListMetadata(shoppingListName, id, updatedAt);
+        return new ShoppingListInfo(shoppingListName, id, updatedAt);
     }
 
     // =======================
@@ -44,7 +44,7 @@ public class ShoppingListsMetadataMapper {
     public Map<String, AttributeValue> toDynamoDBItem(
             String pk,
             String sk,
-            List<ShoppingListMetadata> shoppingListMetadataList
+            List<ShoppingListInfo> shoppingListMetadataList
     ) {
         return Map.of(
                 "PK", AttributeValue.builder().s(pk).build(),
@@ -53,24 +53,24 @@ public class ShoppingListsMetadataMapper {
         );
     }
 
-    private List<AttributeValue> mapShoppingListMetadataList(List<ShoppingListMetadata> shoppingListMetadataList) {
+    private List<AttributeValue> mapShoppingListMetadataList(List<ShoppingListInfo> shoppingListMetadataList) {
         return shoppingListMetadataList.stream()
                 .map(this::mapShoppingListMetadata)
                 .toList();
     }
 
-    private AttributeValue mapShoppingListMetadata(ShoppingListMetadata shoppingListMetadata) {
+    private AttributeValue mapShoppingListMetadata(ShoppingListInfo shoppingListMetadata) {
 
         AttributeValue shoppingListName = AttributeValue.builder().s(
-                shoppingListMetadata.shoppingListName()
+                shoppingListMetadata.getShoppingListName()
         ).build();
 
         AttributeValue id = AttributeValue.builder().s(
-                shoppingListMetadata.id()
+                shoppingListMetadata.getId()
         ).build();
 
         AttributeValue updatedAt = AttributeValue.builder().s(
-                shoppingListMetadata.updatedAt().toString()
+                shoppingListMetadata.getUpdatedAt().toString()
         ).build();
 
         return AttributeValue.builder()

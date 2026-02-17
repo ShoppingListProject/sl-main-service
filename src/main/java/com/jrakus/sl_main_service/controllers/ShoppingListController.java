@@ -4,7 +4,6 @@ import com.jrakus.sl_main_service.controllers.utils.ShoppingListCreator;
 import com.jrakus.sl_main_service.repositories.MetadataRepository;
 import com.jrakus.sl_main_service.repositories.RecipeRepository;
 import com.jrakus.sl_main_service.repositories.ShoppingListRepository;
-import com.jrakus.sl_main_service.repositories.dynamo_db.models.ShoppingListMetadata;
 import org.openapitools.api.ShoppingListsApi;
 import org.openapitools.model.*;
 import org.openapitools.model.ShoppingList;
@@ -41,25 +40,25 @@ public class ShoppingListController implements ShoppingListsApi {
 
         // TODO: verify the passed parameters
 
-        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+        List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
         if (querySearch != null) {
             shoppingListMetadataList = shoppingListMetadataList.stream().filter(
-                    metadata -> metadata.shoppingListName().toLowerCase()
+                    metadata -> metadata.getShoppingListName().toLowerCase()
                                     .contains(querySearch.toLowerCase())
             ).toList();
         }
 
         // TODO: handle errors thrown by subList method
-        List<ShoppingListMetadata> partOfShoppingListMetadataList = shoppingListMetadataList.subList(offset, limit);
-        List<ShoppingListMetadata> sortedShoppingListMetadata = partOfShoppingListMetadataList.stream().sorted(
-                Comparator.comparing(ShoppingListMetadata::updatedAt)
+        List<ShoppingListInfo> partOfShoppingListMetadataList = shoppingListMetadataList.subList(offset, limit);
+        List<ShoppingListInfo> sortedShoppingListMetadata = partOfShoppingListMetadataList.stream().sorted(
+                Comparator.comparing(ShoppingListInfo::getUpdatedAt)
         ).toList();
 
         List<ShoppingList> shoppingLists = shoppingListRepository.getShoppingListsForUser(
                 userId,
-                sortedShoppingListMetadata.getFirst().updatedAt(),
-                sortedShoppingListMetadata.getLast().updatedAt()
+                sortedShoppingListMetadata.getFirst().getUpdatedAt(),
+                sortedShoppingListMetadata.getLast().getUpdatedAt()
         );
 
         return ResponseEntity.ok(shoppingLists);
@@ -81,13 +80,13 @@ public class ShoppingListController implements ShoppingListsApi {
 
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
 
-        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+        List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
         // TODO:
         //  Handle situation when the shopping list metadata has not been created yet.
         //  It happens when user creates his first shopping list
 
-        ShoppingListMetadata shoppingListMetadata = new ShoppingListMetadata(
+        ShoppingListInfo shoppingListMetadata = new ShoppingListInfo(
                 shoppingListCreate.getName(),
                 newShoppingListId,
                 currentDateTime
@@ -129,13 +128,13 @@ public class ShoppingListController implements ShoppingListsApi {
         ShoppingList shoppingList = shoppingListCreator.createShoppingList(newShoppingListName, allPreparedRecipes);
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
 
-        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+        List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
         // TODO:
         //  Handle situation when the shopping list metadata has not been created yet.
         //  It happens when user creates his first shopping list
 
-        ShoppingListMetadata shoppingListMetadata = new ShoppingListMetadata(
+        ShoppingListInfo shoppingListMetadata = new ShoppingListInfo(
                 newShoppingListName,
                 shoppingList.getShoppingListId(),
                 shoppingList.getUpdatedAt()
@@ -161,9 +160,9 @@ public class ShoppingListController implements ShoppingListsApi {
 
         shoppingListRepository.deleteShoppingListForUser(userId, shoppingListId);
 
-        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
-        Optional<ShoppingListMetadata> deletedShoppingListMetadataOptional = shoppingListMetadataList.stream()
-                .filter(m -> m.id().equals(shoppingListId))
+        List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+        Optional<ShoppingListInfo> deletedShoppingListMetadataOptional = shoppingListMetadataList.stream()
+                .filter(m -> m.getId().equals(shoppingListId))
                 .findAny();
 
         deletedShoppingListMetadataOptional.ifPresent(shoppingListMetadataList::remove);
@@ -194,9 +193,9 @@ public class ShoppingListController implements ShoppingListsApi {
 
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
 
-        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+        List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
-        ShoppingListMetadata updatedShoppingListMetadata = new ShoppingListMetadata(
+        ShoppingListInfo updatedShoppingListMetadata = new ShoppingListInfo(
                 shoppingList.getName(),
                 shoppingList.getShoppingListId(),
                 currentDateTime
@@ -205,7 +204,7 @@ public class ShoppingListController implements ShoppingListsApi {
         int index = 0;
         for (int i = 0; i < shoppingListMetadataList.size(); i++) {
 
-            String metadataId = shoppingListMetadataList.get(i).id();
+            String metadataId = shoppingListMetadataList.get(i).getId();
 
             if (metadataId.equals(shoppingListId)) {
                 index = i;
@@ -222,11 +221,11 @@ public class ShoppingListController implements ShoppingListsApi {
     @Override
     public ResponseEntity<NumberOfPages> getPages(String userId, String itemsPerPage, String querySearch) {
 
-        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+        List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
         if (querySearch != null) {
             shoppingListMetadataList = shoppingListMetadataList.stream().filter(
-                    metadata -> metadata.shoppingListName().contains(querySearch)
+                    metadata -> metadata.getShoppingListName().contains(querySearch)
             ).toList();
         }
 
@@ -234,5 +233,12 @@ public class ShoppingListController implements ShoppingListsApi {
         NumberOfPages numberOfPagesObject = new NumberOfPages(numberOfPages);
 
         return ResponseEntity.ok(numberOfPagesObject);
+    }
+
+    @Override
+    public ResponseEntity<List<ShoppingListInfo>> getMetadata(String userId) {
+        List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+
+        return ResponseEntity.ok(shoppingListMetadataList);
     }
 }

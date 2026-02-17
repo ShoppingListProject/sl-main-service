@@ -2,8 +2,8 @@ package com.jrakus.sl_main_service.repositories.dynamo_db;
 
 import com.jrakus.sl_main_service.repositories.MetadataRepository;
 import com.jrakus.sl_main_service.repositories.dynamo_db.mapper.ShoppingListsMetadataMapper;
-import com.jrakus.sl_main_service.repositories.dynamo_db.models.ShoppingListMetadata;
 import com.jrakus.sl_main_service.repositories.dynamo_db.utils.DynamoDBQueryHelper;
+import org.openapitools.model.ShoppingListInfo;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
@@ -28,7 +28,7 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
     }
 
     @Override
-    public List<ShoppingListMetadata> getShoppingListMetadata(String userId) {
+    public List<ShoppingListInfo> getShoppingListMetadata(String userId) {
 
         String pk = pkPrefix + userId;
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, skShoppingList);
@@ -37,7 +37,7 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
     }
 
     @Override
-    public void saveShoppingListMetadata(String userId, List<ShoppingListMetadata> shoppingListMetadataList) {
+    public void saveShoppingListMetadata(String userId, List<ShoppingListInfo> shoppingListMetadataList) {
         String pk = pkPrefix + userId;
 
         Map<String, AttributeValue> dynamoDBItem = shoppingListMetadataMapper.toDynamoDBItem(
