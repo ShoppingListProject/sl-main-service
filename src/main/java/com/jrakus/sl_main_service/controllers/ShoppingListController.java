@@ -45,10 +45,12 @@ public class ShoppingListController implements ShoppingListsApi {
 
         if (querySearch != null) {
             shoppingListMetadataList = shoppingListMetadataList.stream().filter(
-                    metadata -> metadata.shoppingListName().contains(querySearch)
+                    metadata -> metadata.shoppingListName().toLowerCase()
+                                    .contains(querySearch.toLowerCase())
             ).toList();
         }
 
+        // TODO: handle errors thrown by subList method
         List<ShoppingListMetadata> partOfShoppingListMetadataList = shoppingListMetadataList.subList(offset, limit);
         List<ShoppingListMetadata> sortedShoppingListMetadata = partOfShoppingListMetadataList.stream().sorted(
                 Comparator.comparing(ShoppingListMetadata::updatedAt)
