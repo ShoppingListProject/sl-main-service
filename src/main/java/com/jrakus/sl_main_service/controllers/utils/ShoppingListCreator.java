@@ -12,12 +12,13 @@ public class ShoppingListCreator {
     public ShoppingList createShoppingList(String shoppingListName, List<Recipe> recipes) {
 
         String newShoppingListId = UUID.randomUUID().toString();
+        OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         ShoppingList shoppingList = new ShoppingList()
                 .shoppingListId(newShoppingListId)
                 .name(shoppingListName)
-                .createdAt(OffsetDateTime.now())
-                .updatedAt(OffsetDateTime.now());
+                .createdAt(currentDateTime)
+                .updatedAt(currentDateTime);
 
         List<CategorizedItems> itemsPerCategory = getItemsPerCategory(recipes);
         shoppingList.setItemsPerCategory(itemsPerCategory);
@@ -44,7 +45,7 @@ public class ShoppingListCreator {
         );
 
         return createRecipesWithCorrectAmountOfItems(recipeToAmount);
-    };
+    }
 
     private void sortRecipeArrays(
             List<Recipe> userRecipes,

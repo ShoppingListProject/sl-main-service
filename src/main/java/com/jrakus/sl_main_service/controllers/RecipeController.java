@@ -41,11 +41,12 @@ public class RecipeController implements RecipesApi {
     public ResponseEntity<Recipe> createRecipeForUser(String userId, RecipeCreate recipeBase) {
 
         String newRecipeId = UUID.randomUUID().toString();
+        OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         Recipe recipe = new Recipe()
                 .recipeId(newRecipeId)
-                .createdAt(OffsetDateTime.now())
-                .updatedAt(OffsetDateTime.now())
+                .createdAt(currentDateTime)
+                .updatedAt(currentDateTime)
                 .name(recipeBase.getName())
                 .items(recipeBase.getItems());
 
@@ -75,11 +76,13 @@ public class RecipeController implements RecipesApi {
         // Check if the element already exists
         // Do not update createAt - use the previous value taken from DB
 
+        OffsetDateTime currentDateTime = OffsetDateTime.now();
+
         Recipe recipe = new Recipe()
                 .recipeId(recipeId)
                 .name(recipeBase.getName())
-                .updatedAt(OffsetDateTime.now())
-                .createdAt(OffsetDateTime.now())
+                .updatedAt(currentDateTime)
+                .createdAt(currentDateTime)
                 .items(recipeBase.getItems());
 
         recipeRepository.saveRecipeForUser(userId, recipe);

@@ -41,7 +41,7 @@ public class ShoppingListController implements ShoppingListsApi {
 
         // TODO: verify the passed parameters
 
-        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetaData(userId);
+        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
         if (querySearch != null) {
             shoppingListMetadataList = shoppingListMetadataList.stream().filter(
@@ -70,15 +70,32 @@ public class ShoppingListController implements ShoppingListsApi {
     public ResponseEntity<ShoppingList> createShoppingList(String userId, ShoppingListCreate shoppingListCreate) {
 
         String newShoppingListId = UUID.randomUUID().toString();
+        OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         ShoppingList shoppingList = new ShoppingList()
                 .shoppingListId(newShoppingListId)
                 .name(shoppingListCreate.getName())
                 .itemsPerCategory(shoppingListCreate.getItemsPerCategory())
-                .createdAt(OffsetDateTime.now())
-                .updatedAt(OffsetDateTime.now());
+                .createdAt(currentDateTime)
+                .updatedAt(currentDateTime);
 
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
+
+        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+
+        // TODO:
+        //  Handle situation when the shopping list metadata has not been created yet.
+        //  It happens when user creates his first shopping list
+
+        ShoppingListMetadata shoppingListMetadata = new ShoppingListMetadata(
+                shoppingListCreate.getName(),
+                newShoppingListId,
+                currentDateTime
+        );
+
+        shoppingListMetadataList.add(shoppingListMetadata);
+        metadataRepository.saveShoppingListMetadata(userId, shoppingListMetadataList);
+
         return ResponseEntity.status(201).body(shoppingList);
     }
 
@@ -112,6 +129,21 @@ public class ShoppingListController implements ShoppingListsApi {
         ShoppingList shoppingList = shoppingListCreator.createShoppingList(newShoppingListName, allPreparedRecipes);
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
 
+        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+
+        // TODO:
+        //  Handle situation when the shopping list metadata has not been created yet.
+        //  It happens when user creates his first shopping list
+
+        ShoppingListMetadata shoppingListMetadata = new ShoppingListMetadata(
+                newShoppingListName,
+                shoppingList.getShoppingListId(),
+                shoppingList.getUpdatedAt()
+        );
+
+        shoppingListMetadataList.add(shoppingListMetadata);
+        metadataRepository.saveShoppingListMetadata(userId, shoppingListMetadataList);
+
         return ResponseEntity.status(201).body(shoppingList);
     }
 
@@ -128,6 +160,16 @@ public class ShoppingListController implements ShoppingListsApi {
             return ResponseEntity.notFound().build();
 
         shoppingListRepository.deleteShoppingListForUser(userId, shoppingListId);
+
+        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+        Optional<ShoppingListMetadata> deletedShoppingListMetadataOptional = shoppingListMetadataList.stream()
+                .filter(m -> m.id().equals(shoppingListId))
+                .findAny();
+
+        deletedShoppingListMetadataOptional.ifPresent(shoppingListMetadataList::remove);
+
+        metadataRepository.saveShoppingListMetadata(userId, shoppingListMetadataList);
+
         return ResponseEntity.ok(shoppingListOptional.get());
     }
 
@@ -140,14 +182,39 @@ public class ShoppingListController implements ShoppingListsApi {
         // Check if the element already exists
         // Do not update createdAt field - Reuse the value taken from DB
 
+        OffsetDateTime currentDateTime = OffsetDateTime.now();
+
         ShoppingList shoppingList = new ShoppingList()
                 .shoppingListId(shoppingListId)
                 .name(shoppingListBase.getName())
-                .updatedAt(OffsetDateTime.now())
-                .createdAt(OffsetDateTime.now())
+                .updatedAt(currentDateTime)
+                .createdAt(currentDateTime)
                 .itemsPerCategory(shoppingListBase.getItemsPerCategory());
 
+
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
+
+        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+
+        ShoppingListMetadata updatedShoppingListMetadata = new ShoppingListMetadata(
+                shoppingList.getName(),
+                shoppingList.getShoppingListId(),
+                currentDateTime
+        );
+
+        int index = 0;
+        for (int i = 0; i < shoppingListMetadataList.size(); i++) {
+
+            String metadataId = shoppingListMetadataList.get(i).id();
+
+            if (metadataId.equals(shoppingListId)) {
+                index = i;
+                break;
+            }
+        }
+
+        shoppingListMetadataList.add(index, updatedShoppingListMetadata);
+        metadataRepository.saveShoppingListMetadata(userId, shoppingListMetadataList);
 
         return ResponseEntity.ok(shoppingList);
     }
@@ -155,7 +222,7 @@ public class ShoppingListController implements ShoppingListsApi {
     @Override
     public ResponseEntity<NumberOfPages> getPages(String userId, String itemsPerPage, String querySearch) {
 
-        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetaData(userId);
+        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
         if (querySearch != null) {
             shoppingListMetadataList = shoppingListMetadataList.stream().filter(

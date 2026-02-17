@@ -28,11 +28,24 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
     }
 
     @Override
-    public List<ShoppingListMetadata> getShoppingListMetaData(String userId) {
+    public List<ShoppingListMetadata> getShoppingListMetadata(String userId) {
 
         String pk = pkPrefix + userId;
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, skShoppingList);
 
         return shoppingListMetadataMapper.fromDynamoDBItem(responseItem);
+    }
+
+    @Override
+    public void saveShoppingListMetadata(String userId, List<ShoppingListMetadata> shoppingListMetadataList) {
+        String pk = pkPrefix + userId;
+
+        Map<String, AttributeValue> dynamoDBItem = shoppingListMetadataMapper.toDynamoDBItem(
+                pk,
+                skShoppingList,
+                shoppingListMetadataList
+        );
+
+        dynamoDBQueryHelper.saveSingleItem(dynamoDBItem);
     }
 }

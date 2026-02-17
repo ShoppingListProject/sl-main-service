@@ -5,5 +5,6 @@ import com.jrakus.sl_main_service.repositories.dynamo_db.models.ShoppingListMeta
 import java.util.List;
 
 public interface MetadataRepository {
-    List<ShoppingListMetadata> getShoppingListMetaData(String userId);
+    List<ShoppingListMetadata> getShoppingListMetadata(String userId);
+    void saveShoppingListMetadata(String userId, List<ShoppingListMetadata> shoppingListMetadataList);
 }

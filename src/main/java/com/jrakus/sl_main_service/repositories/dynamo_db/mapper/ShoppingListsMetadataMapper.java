@@ -5,8 +5,10 @@ import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class ShoppingListsMetadataMapper {
@@ -23,7 +25,7 @@ public class ShoppingListsMetadataMapper {
         return items.stream()
                 .map(AttributeValue::m)
                 .map(this::mapToShoppingListMetadata)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private ShoppingListMetadata mapToShoppingListMetadata(Map<String, AttributeValue> item) {
@@ -47,7 +49,7 @@ public class ShoppingListsMetadataMapper {
         return Map.of(
                 "PK", AttributeValue.builder().s(pk).build(),
                 "SK", AttributeValue.builder().s(sk).build(),
-                "name", AttributeValue.builder().l(mapShoppingListMetadataList(shoppingListMetadataList)).build()
+                "metadata", AttributeValue.builder().l(mapShoppingListMetadataList(shoppingListMetadataList)).build()
         );
     }
 
