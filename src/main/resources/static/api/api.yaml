@@ -213,6 +213,50 @@ paths:
         "403":
           $ref: "#/components/responses/forbidden"
 
+  /api/v1/shoppingLists/pages/{userId}:
+    get:
+      operationId: getPages
+      summary: Retrieve number of pages
+      description: Retrieve number of pages to display for a specific filter and amount of items per page.
+      tags:
+        - ShoppingLists
+      parameters:
+
+        - name: userId
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+
+        - name: itemsPerPage
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The number of items that the page will contain.
+
+        - name: querySearch
+          in: query
+          schema:
+            type: string
+          description: | 
+            Text pattern to search for in shopping lists. The text is required to find the exact number of pages that
+            will be needed to display all shopping lists
+
+      responses:
+
+        "200":
+          description: Everything went fine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/numberOfPages"
+
+        "403":
+          $ref: "#/components/responses/forbidden"
+
+
   /api/v1/recipes/{userId}:
     get:
       operationId: getRecipesForUser
@@ -581,6 +625,14 @@ components:
         recipeId:
           type: string
         amount:
+          type: integer
+
+    numberOfPages:
+      type: object
+      required:
+        - numberOfPages
+      properties:
+        numberOfPages:
           type: integer
 
   responses:

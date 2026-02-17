@@ -4,9 +4,8 @@
       "PutRequest": {
         "Item": {
           "PK": {"S":  "USER#37d4d38e-e304-43ab-978d-da6b8495d7f6"},
-          "SK": {"S":  "SHOPPING_LIST#4387710c-f74b-463d-b294-052c1b401734"},
+          "SK": {"S":  "SHOPPING_LIST#2025-09-27T15:16:05.951250500Z#4387710c-f74b-463d-b294-052c1b401734"},
           "createdAt": {"S":  "2025-09-27T15:16:05.951250500Z"},
-          "updatedAt": {"S":  "2025-09-27T15:16:05.951250500Z"},
           "name": {"S":  "Weekend Shopping List"},
           "itemsPerCategory": {
             "L":  [
@@ -258,6 +257,25 @@
                       }
                     ]
                   }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "USER#37d4d38e-e304-43ab-978d-da6b8495d7f6"},
+          "SK": {"S": "METADATA#SHOPPING_LISTS"},
+          "metadata": {
+            "L": [
+              {
+                "M": {
+                  "shoppingListName": {"S": "Weekend Shopping List"},
+                  "id": {"S": "4387710c-f74b-463d-b294-052c1b401734"},
+                  "updatedAt": {"S": "2025-09-27T15:16:05.951250500Z"}
                 }
               }
             ]

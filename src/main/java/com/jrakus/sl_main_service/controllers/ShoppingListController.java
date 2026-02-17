@@ -1,8 +1,10 @@
 package com.jrakus.sl_main_service.controllers;
 
 import com.jrakus.sl_main_service.controllers.utils.ShoppingListCreator;
+import com.jrakus.sl_main_service.repositories.MetadataRepository;
 import com.jrakus.sl_main_service.repositories.RecipeRepository;
 import com.jrakus.sl_main_service.repositories.ShoppingListRepository;
+import com.jrakus.sl_main_service.repositories.dynamo_db.models.ShoppingListMetadata;
 import org.openapitools.api.ShoppingListsApi;
 import org.openapitools.model.*;
 import org.openapitools.model.ShoppingList;
@@ -10,32 +12,54 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 public class ShoppingListController implements ShoppingListsApi {
 
     private final ShoppingListRepository shoppingListRepository;
     private final RecipeRepository recipeRepository;
+    private final MetadataRepository metadataRepository;
 
     private final ShoppingListCreator shoppingListCreator;
 
     public ShoppingListController(
             ShoppingListRepository shoppingListRepository,
             RecipeRepository recipeRepository,
+            MetadataRepository metadataRepository,
             ShoppingListCreator shoppingListCreator
     ) {
         this.shoppingListRepository = shoppingListRepository;
         this.recipeRepository = recipeRepository;
+        this.metadataRepository = metadataRepository;
 
         this.shoppingListCreator = shoppingListCreator;
     }
 
     @Override
     public ResponseEntity<List<ShoppingList>> getShoppingListsForUser(String userId, Integer offset, Integer limit, String querySearch) {
-        List<ShoppingList> shoppingLists = shoppingListRepository.getShoppingListsForUser(userId);
+
+        // TODO: verify the passed parameters
+
+        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetaData(userId);
+
+        if (querySearch != null) {
+            shoppingListMetadataList = shoppingListMetadataList.stream().filter(
+                    metadata -> metadata.shoppingListName().contains(querySearch)
+            ).toList();
+        }
+
+        List<ShoppingListMetadata> partOfShoppingListMetadataList = shoppingListMetadataList.subList(offset, limit);
+        List<ShoppingListMetadata> sortedShoppingListMetadata = partOfShoppingListMetadataList.stream().sorted(
+                Comparator.comparing(ShoppingListMetadata::updatedAt)
+        ).toList();
+
+        List<ShoppingList> shoppingLists = shoppingListRepository.getShoppingListsForUser(
+                userId,
+                sortedShoppingListMetadata.getFirst().updatedAt(),
+                sortedShoppingListMetadata.getLast().updatedAt()
+        );
+
         return ResponseEntity.ok(shoppingLists);
     }
 
@@ -124,5 +148,22 @@ public class ShoppingListController implements ShoppingListsApi {
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
 
         return ResponseEntity.ok(shoppingList);
+    }
+
+    @Override
+    public ResponseEntity<NumberOfPages> getPages(String userId, String itemsPerPage, String querySearch) {
+
+        List<ShoppingListMetadata> shoppingListMetadataList = metadataRepository.getShoppingListMetaData(userId);
+
+        if (querySearch != null) {
+            shoppingListMetadataList = shoppingListMetadataList.stream().filter(
+                    metadata -> metadata.shoppingListName().contains(querySearch)
+            ).toList();
+        }
+
+        int numberOfPages =  Math.ceilDiv(shoppingListMetadataList.size(), Integer.parseInt(itemsPerPage));
+        NumberOfPages numberOfPagesObject = new NumberOfPages(numberOfPages);
+
+        return ResponseEntity.ok(numberOfPagesObject);
     }
 }

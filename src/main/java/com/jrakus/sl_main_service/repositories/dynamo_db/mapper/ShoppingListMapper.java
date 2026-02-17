@@ -20,12 +20,15 @@ public class ShoppingListMapper {
     public ShoppingList fromDynamoDBItem(Map<String, AttributeValue> item) {
         ShoppingList shoppingList = new ShoppingList();
 
-        String shoppingListId = item.get("SK").s().split("#")[1];
+        String[] skArray = item.get("SK").s().split("#");
+
+        OffsetDateTime updatedAt = OffsetDateTime.parse(skArray[1]);
+        String shoppingListId = skArray[2];
 
         shoppingList.setShoppingListId(shoppingListId);
         shoppingList.setName(item.get("name").s());
         shoppingList.setCreatedAt(OffsetDateTime.parse(item.get("createdAt").s()));
-        shoppingList.setUpdatedAt(OffsetDateTime.parse(item.get("updatedAt").s()));
+        shoppingList.setUpdatedAt(updatedAt);
         shoppingList.setItemsPerCategory(mapToItemsPerCategory(item.get("itemsPerCategory").l()));
 
         return shoppingList;
@@ -74,7 +77,6 @@ public class ShoppingListMapper {
                 "SK", AttributeValue.builder().s(sk).build(),
                 "name", AttributeValue.builder().s(shoppingList.getName()).build(),
                 "createdAt", AttributeValue.builder().s(shoppingList.getCreatedAt().toString()).build(),
-                "updatedAt", AttributeValue.builder().s(shoppingList.getUpdatedAt().toString()).build(),
                 "itemsPerCategory", AttributeValue.builder()
                         .l(mapFromItemsPerCategory(shoppingList.getItemsPerCategory()))
                         .build()
