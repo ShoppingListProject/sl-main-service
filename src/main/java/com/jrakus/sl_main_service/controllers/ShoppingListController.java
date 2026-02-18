@@ -52,10 +52,10 @@ public class ShoppingListController implements ShoppingListsApi {
         if(offset >= shoppingListMetadataList.size())
             return ResponseEntity.ok(List.of());
 
-        if(limit > shoppingListMetadataList.size())
-            limit = shoppingListMetadataList.size();
+        if(offset + limit > shoppingListMetadataList.size())
+            limit = shoppingListMetadataList.size() - offset;
 
-        List<ShoppingListInfo> partOfShoppingListMetadataList = shoppingListMetadataList.subList(offset, limit);
+        List<ShoppingListInfo> partOfShoppingListMetadataList = shoppingListMetadataList.subList(offset, offset + limit);
         List<ShoppingListInfo> sortedShoppingListMetadata = partOfShoppingListMetadataList.stream().sorted(
                 Comparator.comparing(ShoppingListInfo::getUpdatedAt)
         ).toList();
