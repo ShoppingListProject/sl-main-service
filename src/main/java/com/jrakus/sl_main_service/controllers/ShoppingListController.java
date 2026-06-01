@@ -230,7 +230,9 @@ public class ShoppingListController implements ShoppingListsApi {
 
         if (querySearch != null) {
             shoppingListMetadataList = shoppingListMetadataList.stream().filter(
-                    metadata -> metadata.getShoppingListName().contains(querySearch)
+                    metadata -> metadata.getShoppingListName().toLowerCase().contains(
+                            querySearch.toLowerCase()
+                    )
             ).toList();
         }
 
