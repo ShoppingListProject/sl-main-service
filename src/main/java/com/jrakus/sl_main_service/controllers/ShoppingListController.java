@@ -87,10 +87,6 @@ public class ShoppingListController implements ShoppingListsApi {
 
         List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
-        // TODO:
-        //  Handle situation when the shopping list metadata has not been created yet.
-        //  It happens when user creates his first shopping list
-
         ShoppingListInfo shoppingListMetadata = new ShoppingListInfo(
                 shoppingListCreate.getName(),
                 newShoppingListId,
@@ -224,7 +220,7 @@ public class ShoppingListController implements ShoppingListsApi {
     }
 
     @Override
-    public ResponseEntity<NumberOfPages> getPages(String userId, String itemsPerPage, String querySearch) {
+    public ResponseEntity<NumberOfPages> getPagesForShoppingLists(String userId, String itemsPerPage, String querySearch) {
 
         List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
@@ -243,7 +239,7 @@ public class ShoppingListController implements ShoppingListsApi {
     }
 
     @Override
-    public ResponseEntity<List<ShoppingListInfo>> getMetadata(String userId) {
+    public ResponseEntity<List<ShoppingListInfo>> getMetadataForShoppingLists(String userId) {
         List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
         return ResponseEntity.ok(shoppingListMetadataList);
