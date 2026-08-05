@@ -39,7 +39,7 @@ public class RecipeController implements RecipesApi {
 
         if (querySearch != null) {
             allRecipes = allRecipes.stream().filter(
-                    recipe -> recipe.getName().toLowerCase(Locale.ROOT).equals(querySearch.toLowerCase())
+                    recipe -> recipe.getName().toLowerCase().contains(querySearch.toLowerCase())
             ).toList();
         }
 
