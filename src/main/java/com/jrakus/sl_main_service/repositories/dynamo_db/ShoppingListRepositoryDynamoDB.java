@@ -65,7 +65,7 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
 
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, sk);
 
-        if(responseItem == null)
+        if(responseItem.isEmpty())
             return Optional.empty();
 
         return Optional.of(shoppingListMapper.fromDynamoDBItem(responseItem));

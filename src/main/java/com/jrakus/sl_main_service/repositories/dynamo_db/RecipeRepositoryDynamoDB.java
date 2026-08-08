@@ -106,7 +106,7 @@ public class RecipeRepositoryDynamoDB implements RecipeRepository {
 
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, sk);
 
-        if(responseItem == null)
+        if(responseItem.isEmpty())
             return Optional.empty();
 
         return Optional.of(recipeMapper.fromDynamoDB(responseItem, false));
