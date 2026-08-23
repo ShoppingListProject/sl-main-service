@@ -124,6 +124,58 @@ public class RecipeMapperUnitTests {
         assertEquals(List.of(), recipeAsMap.get("items").l());
     }
 
+    @Test
+    void testMappingToDynamoDBForSimpleRecipe() {
+
+        // given
+        Recipe recipe = createSimpleRecipeWithoutItems(false);
+        RecipeItem recipeItem = new RecipeItem("cucumber", 1f, "kg", "vegetables");
+        recipe.setItems(List.of(recipeItem));
+
+        // when
+        Map<String, AttributeValue> recipeAsMap = recipeMapper.toDynamoDBItem(pk, sk, recipe);
+
+        // then
+        checkBasicFields(recipeAsMap, false);
+
+        AttributeValue expectedRecipeItem = createRecipeItemAsMap("cucumber", 1f, "kg", "vegetables");
+        List<AttributeValue> actualRecipeItems = recipeAsMap.get("items").l();
+
+        assertEquals(1, actualRecipeItems.size());
+        assertEquals(expectedRecipeItem, actualRecipeItems.getFirst());
+    }
+
+    @Test
+    void testMappingToDynamoDBForLargeRecipe() {
+
+        // given
+        Recipe recipe = createSimpleRecipeWithoutItems(false);
+        List<RecipeItem> LisOfRecipeItems = List.of(
+                new RecipeItem("cucumber", 1f, "kg", "vegetables"),
+                new RecipeItem("carrot", 0.5f, "kg", "vegetables"),
+                new RecipeItem("minced pork", 700f, "g", "meat"),
+                new RecipeItem("water", 3f, "l", "beverages")
+        );
+        recipe.setItems(LisOfRecipeItems);
+
+        // when
+        Map<String, AttributeValue> recipeAsMap = recipeMapper.toDynamoDBItem(pk, sk, recipe);
+
+        // then
+        checkBasicFields(recipeAsMap, false);
+
+        List<AttributeValue> expectedListOfRecipeItems = List.of(
+                createRecipeItemAsMap("cucumber", 1f, "kg", "vegetables"),
+                createRecipeItemAsMap("carrot", 0.5f, "kg", "vegetables"),
+                createRecipeItemAsMap("minced pork", 700f, "g", "meat"),
+                createRecipeItemAsMap("water", 3f, "l", "beverages")
+        );
+
+        List<AttributeValue> actualRecipeItems = recipeAsMap.get("items").l();
+
+        assertEquals(expectedListOfRecipeItems, actualRecipeItems);
+    }
+
 
     private Map<String, AttributeValue> createSimpleRecipeMapWithoutItems(boolean isRecipePublic) {
         return new HashMap<>(
