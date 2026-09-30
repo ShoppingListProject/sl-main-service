@@ -1,4 +1,4 @@
-package com.jrakus.sl_main_service.repositories.dynamo_db.mapper;
+ package com.jrakus.sl_main_service.repositories.dynamo_db.mapper;
 
 import org.openapitools.model.Recipe;
 import org.openapitools.model.RecipeItem;
@@ -18,18 +18,15 @@ public class RecipeMapper {
 
     public Recipe fromDynamoDB(Map<String, AttributeValue> item, boolean isPublic) {
 
-        Recipe recipe = new Recipe();
-
         String recipeId = item.get("SK").s().split("#")[1];
 
-        recipe.setRecipeId(recipeId);
-        recipe.setName(item.get("name").s());
-        recipe.setCreatedAt(OffsetDateTime.parse(item.get("createdAt").s()));
-        recipe.setUpdatedAt(OffsetDateTime.parse(item.get("updatedAt").s()));
-        recipe.setItems(mapToRecipeItems(item.get("items").l()));
-        recipe.setIsGlobal(isPublic);
-
-        return recipe;
+        return new Recipe()
+                .recipeId(recipeId)
+                .name(item.get("name").s())
+                .createdAt(OffsetDateTime.parse(item.get("createdAt").s()))
+                .updatedAt(OffsetDateTime.parse(item.get("updatedAt").s()))
+                .items(mapToRecipeItems(item.get("items").l()))
+                .isGlobal(isPublic);
     }
 
     private List<RecipeItem> mapToRecipeItems(List<AttributeValue> items) {
@@ -57,12 +54,12 @@ public class RecipeMapper {
             Recipe recipe
     ) {
         return Map.of(
-                "PK", AttributeValue.builder().s(pk).build(),
-                "SK", AttributeValue.builder().s(sk).build(),
-                "name", AttributeValue.builder().s(recipe.getName()).build(),
-                "createdAt", AttributeValue.builder().s(recipe.getCreatedAt().toString()).build(),
-                "updatedAt", AttributeValue.builder().s(recipe.getUpdatedAt().toString()).build(),
-                "items", AttributeValue.builder().l(mapFromRecipeItems(recipe.getItems())).build()
+                "PK", AttributeValue.fromS(pk),
+                "SK", AttributeValue.fromS(sk),
+                "name", AttributeValue.fromS(recipe.getName()),
+                "createdAt", AttributeValue.fromS(recipe.getCreatedAt().toString()),
+                "updatedAt", AttributeValue.fromS(recipe.getUpdatedAt().toString()),
+                "items", AttributeValue.fromL(mapFromRecipeItems(recipe.getItems()))
         );
     }
 
@@ -73,11 +70,11 @@ public class RecipeMapper {
     }
 
     private AttributeValue mapFromRecipeItem(RecipeItem item) {
-        return AttributeValue.builder().m(Map.of(
-                "category", AttributeValue.builder().s(item.getCategory()).build(),
-                "name", AttributeValue.builder().s(item.getName()).build(),
-                "quantity", AttributeValue.builder().n(String.valueOf(item.getQuantity())).build(),
-                "unit", AttributeValue.builder().s(item.getUnit()).build()
-        )).build();
+        return AttributeValue.fromM(Map.of(
+                "category", AttributeValue.fromS(item.getCategory()),
+                "name", AttributeValue.fromS(item.getName()),
+                "quantity", AttributeValue.fromN(String.valueOf(item.getQuantity())),
+                "unit", AttributeValue.fromS(item.getUnit())
+        ));
     }
 }
