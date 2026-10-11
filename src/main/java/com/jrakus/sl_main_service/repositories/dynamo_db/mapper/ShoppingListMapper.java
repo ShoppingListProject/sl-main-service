@@ -73,13 +73,11 @@ public class ShoppingListMapper {
             ShoppingList shoppingList
     ) {
         return Map.of(
-                "PK", AttributeValue.builder().s(pk).build(),
-                "SK", AttributeValue.builder().s(sk).build(),
-                "name", AttributeValue.builder().s(shoppingList.getName()).build(),
-                "createdAt", AttributeValue.builder().s(shoppingList.getCreatedAt().toString()).build(),
-                "itemsPerCategory", AttributeValue.builder()
-                        .l(mapFromItemsPerCategory(shoppingList.getItemsPerCategory()))
-                        .build()
+                "PK", AttributeValue.fromS(pk),
+                "SK", AttributeValue.fromS(sk),
+                "name", AttributeValue.fromS(shoppingList.getName()),
+                "createdAt", AttributeValue.fromS(shoppingList.getCreatedAt().toString()),
+                "itemsPerCategory", AttributeValue.fromL(mapFromItemsPerCategory(shoppingList.getItemsPerCategory()))
         );
     }
 
@@ -90,14 +88,10 @@ public class ShoppingListMapper {
     }
 
     private AttributeValue mapFromCategorizedItem(CategorizedItems categorizedItem) {
-        return AttributeValue.builder()
-                .m(Map.of(
-                        "category", AttributeValue.builder().s(categorizedItem.getCategory()).build(),
-                        "items", AttributeValue.builder()
-                                .l(mapFromShoppingListItems(categorizedItem.getItems()))
-                                .build()
-                ))
-                .build();
+        return AttributeValue.fromM(Map.of(
+                "category", AttributeValue.fromS(categorizedItem.getCategory()),
+                "items", AttributeValue.fromL(mapFromShoppingListItems(categorizedItem.getItems()))
+        ));
     }
 
     private List<AttributeValue> mapFromShoppingListItems(List<ShoppingListItem> items) {
@@ -107,13 +101,11 @@ public class ShoppingListMapper {
     }
 
     private AttributeValue mapFromShoppingListItem(ShoppingListItem item) {
-        return AttributeValue.builder()
-                .m(Map.of(
-                        "name", AttributeValue.builder().s(item.getName()).build(),
-                        "quantity", AttributeValue.builder().n(String.valueOf(item.getQuantity())).build(),
-                        "unit", AttributeValue.builder().s(item.getUnit()).build(),
-                        "purchased", AttributeValue.builder().bool(item.getPurchased()).build()
-                ))
-                .build();
+        return AttributeValue.fromM(Map.of(
+                "name", AttributeValue.fromS(item.getName()),
+                "quantity", AttributeValue.fromN(String.valueOf(item.getQuantity())),
+                "unit", AttributeValue.fromS(item.getUnit()),
+                "purchased", AttributeValue.fromBool(item.getPurchased())
+        ));
     }
 }

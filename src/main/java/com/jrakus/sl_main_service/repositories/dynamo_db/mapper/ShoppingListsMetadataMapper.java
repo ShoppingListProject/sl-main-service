@@ -47,9 +47,9 @@ public class ShoppingListsMetadataMapper {
             List<ShoppingListInfo> shoppingListMetadataList
     ) {
         return Map.of(
-                "PK", AttributeValue.builder().s(pk).build(),
-                "SK", AttributeValue.builder().s(sk).build(),
-                "metadata", AttributeValue.builder().l(mapShoppingListMetadataList(shoppingListMetadataList)).build()
+                "PK", AttributeValue.fromS(pk),
+                "SK", AttributeValue.fromS(sk),
+                "metadata", AttributeValue.fromL(mapShoppingListMetadataList(shoppingListMetadataList))
         );
     }
 
@@ -60,25 +60,10 @@ public class ShoppingListsMetadataMapper {
     }
 
     private AttributeValue mapShoppingListMetadata(ShoppingListInfo shoppingListMetadata) {
-
-        AttributeValue shoppingListName = AttributeValue.builder().s(
-                shoppingListMetadata.getShoppingListName()
-        ).build();
-
-        AttributeValue id = AttributeValue.builder().s(
-                shoppingListMetadata.getId()
-        ).build();
-
-        AttributeValue updatedAt = AttributeValue.builder().s(
-                shoppingListMetadata.getUpdatedAt().toString()
-        ).build();
-
-        return AttributeValue.builder()
-                .m(Map.of(
-                        "shoppingListName", shoppingListName,
-                        "id", id,
-                        "updatedAt", updatedAt
-                ))
-                .build();
+        return AttributeValue.fromM(Map.of(
+                "shoppingListName", AttributeValue.fromS(shoppingListMetadata.getShoppingListName()),
+                "id", AttributeValue.fromS(shoppingListMetadata.getId()),
+                "updatedAt", AttributeValue.fromS(shoppingListMetadata.getUpdatedAt().toString())
+        ));
     }
 }

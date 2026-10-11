@@ -41,11 +41,6 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
         String pk = pkPrefix + userId;
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, skShoppingList);
 
-        // Handle case when user creates his first data and there is no metadata yet.
-        if (responseItem.isEmpty()) {
-            responseItem = shoppingListMetadataMapper.toDynamoDBItem(pk, skShoppingList, new ArrayList<>());
-        }
-
         return shoppingListMetadataMapper.fromDynamoDBItem(responseItem);
     }
 
@@ -54,11 +49,6 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
 
         String pk = pkPrefix + userId;
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, skRecipe);
-
-        // Handle case when user creates his first data and there is no metadata yet.
-        if (responseItem.isEmpty()) {
-            responseItem = recipesMetadataMapper.toDynamoDBItem(pk, skRecipe, new ArrayList<>());
-        }
 
         return recipesMetadataMapper.fromDynamoDBItem(responseItem);
     }
