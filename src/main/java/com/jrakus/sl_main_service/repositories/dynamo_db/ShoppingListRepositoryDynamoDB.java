@@ -5,12 +5,10 @@ import com.jrakus.sl_main_service.repositories.dynamo_db.mapper.ShoppingListMapp
 import com.jrakus.sl_main_service.repositories.dynamo_db.utils.DynamoDBQueryHelper;
 import org.openapitools.model.ShoppingList;
 import org.springframework.stereotype.Repository;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
-import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -30,31 +28,26 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
     }
 
     @Override
-    public List<ShoppingList> getShoppingListsForUser(String userId, OffsetDateTime from, OffsetDateTime to) {
+    public List<ShoppingList> getShoppingListsForUser(String userId, List<String> shoppingListIds) {
 
         String pk = this.pkPrefix + userId;
-        String skFrom = this.skPrefix + from;
+        List<String> listOfSk = new ArrayList<>();
 
-        /*
-        We append "$" to the upper bound because DynamoDB compares sort keys
-        lexicographically (byte-order string comparison).
-        Our actual SK values have additional characters after `skPrefix + to`
-        (e.g., a UUID suffix like "...#<uuid>").
+        for(String shoppingListId: shoppingListIds) {
+            String sk = this.skPrefix + shoppingListId;
+            listOfSk.add(sk);
+        }
 
-        If we do not add "$" character for the upper bound, the item with the SK that has
-        the same "updateAt" like upperBound won't be returned.
+        var responseItems = dynamoDBQueryHelper.getManyItems(
+                pk,
+                listOfSk
+        );
 
-        "$" is lexicographically greater than "#" (the separator used before the UUID),
-        so this ensures all keys that start with `skPrefix + to + "#"`
-        are included.
-         */
-        String skTo = this.skPrefix + to + "$";
-
-        QueryResponse queryResponse = dynamoDBQueryHelper.queryUsingPKAndSKBetween(pk, skFrom, skTo);
-
-        return queryResponse.items()
+        // BatchGetItem does not guarantee the order of returned items, so restore the requested one
+        return responseItems
                 .stream()
                 .map(shoppingListMapper::fromDynamoDBItem)
+                .sorted(Comparator.comparingInt(list -> shoppingListIds.indexOf(list.getShoppingListId())))
                 .toList();
     }
 
@@ -63,7 +56,7 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
         String pk = this.pkPrefix + userId;
         String sk = this.skPrefix + shoppingListId;
 
-        Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, sk);
+        var responseItem = dynamoDBQueryHelper.getSingleItem(pk, sk);
 
         if(responseItem.isEmpty())
             return Optional.empty();
@@ -75,9 +68,9 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
     public void saveShoppingListForUser(String userId, ShoppingList shoppingList) {
 
         String pk = this.pkPrefix + userId;
-        String sk = this.skPrefix + shoppingList.getUpdatedAt() + "#" + shoppingList.getShoppingListId();
+        String sk = this.skPrefix + shoppingList.getShoppingListId();
 
-        Map<String, AttributeValue> dynamoDBItem = shoppingListMapper.toDynamoDBItem(pk, sk, shoppingList);
+        var dynamoDBItem = shoppingListMapper.toDynamoDBItem(pk, sk, shoppingList);
         dynamoDBQueryHelper.saveSingleItem(dynamoDBItem);
     }
 

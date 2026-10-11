@@ -754,15 +754,11 @@ components:
       required:
         - shoppingListName
         - id
-        - updatedAt
       properties:
         shoppingListName:
           type: string
         id:
           type: string
-        updatedAt:
-          type: string
-          format: date-time
 
     recipesMetadata:
       type: array
@@ -774,15 +770,11 @@ components:
       required:
         - recipeName
         - id
-        - updatedAt
       properties:
         recipeName:
           type: string
         id:
           type: string
-        updatedAt:
-          type: string
-          format: date-time
 
   responses:
     forbidden:

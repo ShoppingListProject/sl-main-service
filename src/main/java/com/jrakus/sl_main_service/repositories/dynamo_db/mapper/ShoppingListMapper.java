@@ -22,13 +22,12 @@ public class ShoppingListMapper {
 
         String[] skArray = item.get("SK").s().split("#");
 
-        OffsetDateTime updatedAt = OffsetDateTime.parse(skArray[1]);
-        String shoppingListId = skArray[2];
+        String shoppingListId = skArray[1];
 
         shoppingList.setShoppingListId(shoppingListId);
         shoppingList.setName(item.get("name").s());
         shoppingList.setCreatedAt(OffsetDateTime.parse(item.get("createdAt").s()));
-        shoppingList.setUpdatedAt(updatedAt);
+        shoppingList.setUpdatedAt(OffsetDateTime.parse(item.get("updatedAt").s()));
         shoppingList.setItemsPerCategory(mapToItemsPerCategory(item.get("itemsPerCategory").l()));
 
         return shoppingList;
@@ -77,6 +76,7 @@ public class ShoppingListMapper {
                 "SK", AttributeValue.fromS(sk),
                 "name", AttributeValue.fromS(shoppingList.getName()),
                 "createdAt", AttributeValue.fromS(shoppingList.getCreatedAt().toString()),
+                "updatedAt", AttributeValue.fromS(shoppingList.getUpdatedAt().toString()),
                 "itemsPerCategory", AttributeValue.fromL(mapFromItemsPerCategory(shoppingList.getItemsPerCategory()))
         );
     }

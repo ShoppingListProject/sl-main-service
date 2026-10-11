@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ShoppingListRepository {
 
-    List<ShoppingList> getShoppingListsForUser(String userId, OffsetDateTime from, OffsetDateTime to);
+    List<ShoppingList> getShoppingListsForUser(String userId, List<String> shoppingListIdList);
 
     Optional<ShoppingList> getUserShoppingListById(String userId, String shoppingListId);
 

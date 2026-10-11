@@ -4,7 +4,6 @@ import org.openapitools.model.ShoppingListInfo;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +31,8 @@ public class ShoppingListsMetadataMapper {
 
         String shoppingListName = item.get("shoppingListName").s();
         String id = item.get("id").s();
-        OffsetDateTime updatedAt = OffsetDateTime.parse(item.get("updatedAt").s());
 
-        return new ShoppingListInfo(shoppingListName, id, updatedAt);
+        return new ShoppingListInfo(shoppingListName, id);
     }
 
     // =======================
@@ -62,8 +60,7 @@ public class ShoppingListsMetadataMapper {
     private AttributeValue mapShoppingListMetadata(ShoppingListInfo shoppingListMetadata) {
         return AttributeValue.fromM(Map.of(
                 "shoppingListName", AttributeValue.fromS(shoppingListMetadata.getShoppingListName()),
-                "id", AttributeValue.fromS(shoppingListMetadata.getId()),
-                "updatedAt", AttributeValue.fromS(shoppingListMetadata.getUpdatedAt().toString())
+                "id", AttributeValue.fromS(shoppingListMetadata.getId())
         ));
     }
 }

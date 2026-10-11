@@ -9,7 +9,6 @@ import org.openapitools.model.ShoppingListInfo;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

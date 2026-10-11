@@ -21,25 +21,7 @@ public class DynamoDBQueryHelper {
         this.tableName = dynamoDBProperties.getTableName();
     }
 
-    public QueryResponse queryUsingPKAndSKBetween(String pk, String skFrom, String skTo) {
-        Map<String, AttributeValue> expressionValues = new HashMap<>();
-
-        expressionValues.put(":pk", AttributeValue.builder().s(pk).build());
-        expressionValues.put(":start", AttributeValue.builder().s(skFrom).build());
-        expressionValues.put(":end", AttributeValue.builder().s(skTo).build());
-
-        String keyConditionExpression = "PK = :pk AND SK BETWEEN :start AND :end";
-
-        QueryRequest queryRequest = QueryRequest.builder()
-                .tableName(tableName)
-                .keyConditionExpression(keyConditionExpression)
-                .expressionAttributeValues(expressionValues)
-                .build();
-
-        return ddb.query(queryRequest);
-    }
-
-    public QueryResponse queryUsingPKAndSKPrefix(String pk, String skPrefix) {
+    public List<Map<String, AttributeValue>> queryUsingPKAndSKPrefix(String pk, String skPrefix) {
 
         Map<String, AttributeValue> expressionValues = new HashMap<>();
         expressionValues.put(":pk", AttributeValue.builder().s(pk).build());
@@ -53,7 +35,7 @@ public class DynamoDBQueryHelper {
                 .expressionAttributeValues(expressionValues)
                 .build();
 
-        return ddb.query(queryRequest);
+        return ddb.query(queryRequest).items();
     }
 
     public List<Map<String, AttributeValue>> getManyItems(String pk, List<String> listOfSk) {

@@ -4,7 +4,6 @@ import org.openapitools.model.RecipeInfo;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +31,8 @@ public class RecipesMetadataMapper {
 
         String recipeName = item.get("recipeName").s();
         String id = item.get("id").s();
-        OffsetDateTime updatedAt = OffsetDateTime.parse(item.get("updatedAt").s());
 
-        return new RecipeInfo(recipeName, id, updatedAt);
+        return new RecipeInfo(recipeName, id);
     }
 
     // =======================
@@ -47,9 +45,9 @@ public class RecipesMetadataMapper {
             List<RecipeInfo> recipeMetadataList
     ) {
         return Map.of(
-                "PK", AttributeValue.builder().s(pk).build(),
-                "SK", AttributeValue.builder().s(sk).build(),
-                "metadata", AttributeValue.builder().l(mapRecipeMetadataList(recipeMetadataList)).build()
+                "PK", AttributeValue.fromS(pk),
+                "SK", AttributeValue.fromS(sk),
+                "metadata", AttributeValue.fromL((mapRecipeMetadataList(recipeMetadataList)))
         );
     }
 
@@ -61,24 +59,14 @@ public class RecipesMetadataMapper {
 
     private AttributeValue mapRecipeMetadata(RecipeInfo recipeMetadata) {
 
-        AttributeValue recipeName = AttributeValue.builder().s(
-                recipeMetadata.getRecipeName()
-        ).build();
+        AttributeValue recipeName = AttributeValue.fromS(recipeMetadata.getRecipeName());
+        AttributeValue id = AttributeValue.fromS(recipeMetadata.getId());
 
-        AttributeValue id = AttributeValue.builder().s(
-                recipeMetadata.getId()
-        ).build();
-
-        AttributeValue updatedAt = AttributeValue.builder().s(
-                recipeMetadata.getUpdatedAt().toString()
-        ).build();
-
-        return AttributeValue.builder()
-                .m(Map.of(
+        return AttributeValue.fromM(
+                Map.of(
                         "recipeName", recipeName,
-                        "id", id,
-                        "updatedAt", updatedAt
-                ))
-                .build();
+                        "id", id
+                )
+        );
     }
 }

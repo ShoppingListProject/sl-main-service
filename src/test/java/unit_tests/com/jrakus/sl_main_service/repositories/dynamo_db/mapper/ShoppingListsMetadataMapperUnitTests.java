@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.openapitools.model.ShoppingListInfo;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -19,11 +18,11 @@ class ShoppingListsMetadataMapperUnitTests {
     private static final String SK = "METADATA#SHOPPING_LISTS";
 
     private static final ShoppingListInfo WEEKEND =
-            new ShoppingListInfo("weekend shopping", "1234", OffsetDateTime.parse("2025-09-27T15:16:05.951250500Z"));
+            new ShoppingListInfo("weekend shopping", "1234");
     private static final ShoppingListInfo PARTY =
-            new ShoppingListInfo("party", "1235", OffsetDateTime.parse("2025-10-28T15:16:05.951250500Z"));
+            new ShoppingListInfo("party", "1235");
     private static final ShoppingListInfo DINNER =
-            new ShoppingListInfo("dinner with friends", "1236", OffsetDateTime.parse("2025-10-28T12:16:05.951450500Z"));
+            new ShoppingListInfo("dinner with friends", "1236");
 
     private final ShoppingListsMetadataMapper shoppingListsMetadataMapper = new ShoppingListsMetadataMapper();
 
@@ -85,8 +84,7 @@ class ShoppingListsMetadataMapperUnitTests {
     private AttributeValue createShoppingListInfoAsMap(ShoppingListInfo info) {
         return AttributeValue.fromM(Map.of(
                 "shoppingListName", AttributeValue.fromS(info.getShoppingListName()),
-                "id", AttributeValue.fromS(info.getId()),
-                "updatedAt", AttributeValue.fromS(info.getUpdatedAt().toString())
+                "id", AttributeValue.fromS(info.getId())
         ));
     }
 }

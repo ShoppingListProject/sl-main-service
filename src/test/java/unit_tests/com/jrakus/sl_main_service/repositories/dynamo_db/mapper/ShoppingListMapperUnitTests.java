@@ -22,7 +22,7 @@ class ShoppingListMapperUnitTests {
     private static final String SHOPPING_LIST_NAME = "weekend shopping";
     private static final String CREATION_TIME = "2025-09-27T15:16:05.951250500Z";
     private static final String UPDATING_TIME = "2026-11-02T12:06:15.951250500Z";
-    private static final String SK = "SHOPPINGLIST#" + UPDATING_TIME + "#" + SHOPPING_LIST_ID;
+    private static final String SK = "SHOPPING_LIST#" + SHOPPING_LIST_ID;
 
     private static final CategorizedItems VEGETABLES = new CategorizedItems(
             "vegetables",
@@ -96,6 +96,7 @@ class ShoppingListMapperUnitTests {
                 "SK", AttributeValue.fromS(SK),
                 "name", AttributeValue.fromS(SHOPPING_LIST_NAME),
                 "createdAt", AttributeValue.fromS(CREATION_TIME),
+                "updatedAt", AttributeValue.fromS(UPDATING_TIME),
                 "itemsPerCategory", AttributeValue.fromL(
                         itemsPerCategory.stream().map(this::createCategorizedItemsAsMap).toList()
                 )

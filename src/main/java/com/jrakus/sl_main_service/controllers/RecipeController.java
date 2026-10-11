@@ -71,8 +71,7 @@ public class RecipeController implements RecipesApi {
 
         RecipeInfo recipeInfo = new RecipeInfo()
                 .recipeName(recipeBase.getName())
-                .id(newRecipeId)
-                .updatedAt(currentDateTime);
+                .id(newRecipeId);
 
         recipeMetadata.add(recipeInfo);
 
@@ -125,8 +124,7 @@ public class RecipeController implements RecipesApi {
 
         RecipeInfo recipeInfo = new RecipeInfo()
                 .recipeName(recipeBase.getName())
-                .id(recipeId)
-                .updatedAt(currentDateTime);
+                .id(recipeId);
 
         recipeMetadata.add(recipeInfo);
 
