@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.openapitools.model.RecipeInfo;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -19,11 +18,11 @@ class RecipesMetadataMapperUnitTests {
     private static final String SK = "METADATA#RECIPES";
 
     private static final RecipeInfo SPAGHETTI =
-            new RecipeInfo("spaghetti", "1234", OffsetDateTime.parse("2025-09-27T15:16:05.951250500Z"));
+            new RecipeInfo("spaghetti", "1234");
     private static final RecipeInfo PIZZA =
-            new RecipeInfo("pizza", "1235", OffsetDateTime.parse("2025-10-28T15:16:05.951250500Z"));
+            new RecipeInfo("pizza", "1235");
     private static final RecipeInfo CHICKEN =
-            new RecipeInfo("chicken with rice", "1236", OffsetDateTime.parse("2025-10-28T12:16:05.951450500Z"));
+            new RecipeInfo("chicken with rice", "1236");
 
     private final RecipesMetadataMapper recipesMetadataMapper = new RecipesMetadataMapper();
 
@@ -83,8 +82,7 @@ class RecipesMetadataMapperUnitTests {
     private AttributeValue createRecipeInfoAsMap(RecipeInfo info) {
         return AttributeValue.fromM(Map.of(
                 "recipeName", AttributeValue.fromS(info.getRecipeName()),
-                "id", AttributeValue.fromS(info.getId()),
-                "updatedAt", AttributeValue.fromS(info.getUpdatedAt().toString())
+                "id", AttributeValue.fromS(info.getId())
         ));
     }
 }

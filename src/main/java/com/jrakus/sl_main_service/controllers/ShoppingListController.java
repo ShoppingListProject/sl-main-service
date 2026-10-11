@@ -55,15 +55,17 @@ public class ShoppingListController implements ShoppingListsApi {
         if(offset + limit > shoppingListMetadataList.size())
             limit = shoppingListMetadataList.size() - offset;
 
-        List<ShoppingListInfo> partOfShoppingListMetadataList = shoppingListMetadataList.subList(offset, offset + limit);
-        List<ShoppingListInfo> sortedShoppingListMetadata = partOfShoppingListMetadataList.stream().sorted(
-                Comparator.comparing(ShoppingListInfo::getUpdatedAt)
+        List<ShoppingListInfo> partOfShoppingListMetadataList = shoppingListMetadataList.subList(
+                offset, offset + limit
+        );
+
+        List<String> shoppingListIdList = partOfShoppingListMetadataList.stream().map(
+                ShoppingListInfo::getId
         ).toList();
 
         List<ShoppingList> shoppingLists = shoppingListRepository.getShoppingListsForUser(
                 userId,
-                sortedShoppingListMetadata.getFirst().getUpdatedAt(),
-                sortedShoppingListMetadata.getLast().getUpdatedAt()
+                shoppingListIdList
         );
 
         return ResponseEntity.ok(shoppingLists);
@@ -89,8 +91,7 @@ public class ShoppingListController implements ShoppingListsApi {
 
         ShoppingListInfo shoppingListMetadata = new ShoppingListInfo(
                 shoppingListCreate.getName(),
-                newShoppingListId,
-                currentDateTime
+                newShoppingListId
         );
 
         shoppingListMetadataList.add(shoppingListMetadata);
@@ -137,8 +138,7 @@ public class ShoppingListController implements ShoppingListsApi {
 
         ShoppingListInfo shoppingListMetadata = new ShoppingListInfo(
                 newShoppingListName,
-                shoppingList.getShoppingListId(),
-                shoppingList.getUpdatedAt()
+                shoppingList.getShoppingListId()
         );
 
         shoppingListMetadataList.add(shoppingListMetadata);
@@ -198,8 +198,7 @@ public class ShoppingListController implements ShoppingListsApi {
 
         ShoppingListInfo updatedShoppingListMetadata = new ShoppingListInfo(
                 shoppingList.getName(),
-                shoppingList.getShoppingListId(),
-                currentDateTime
+                shoppingList.getShoppingListId()
         );
 
         int index = 0;
