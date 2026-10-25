@@ -1,17 +1,20 @@
 package com.jrakus.sl_main_service.controllers;
 
 import com.jrakus.sl_main_service.controllers.utils.ShoppingListCreator;
+import com.jrakus.sl_main_service.exceptions.specific_exceptions.NotFoundException;
 import com.jrakus.sl_main_service.repositories.MetadataRepository;
 import com.jrakus.sl_main_service.repositories.RecipeRepository;
 import com.jrakus.sl_main_service.repositories.ShoppingListRepository;
 import org.openapitools.api.ShoppingListsApi;
 import org.openapitools.model.*;
 import org.openapitools.model.ShoppingList;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class ShoppingListController implements ShoppingListsApi {
@@ -37,8 +40,6 @@ public class ShoppingListController implements ShoppingListsApi {
 
     @Override
     public ResponseEntity<List<ShoppingList>> getShoppingListsForUser(String userId, Integer offset, Integer limit, String querySearch) {
-
-        // TODO: verify the passed parameters
 
         List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
@@ -101,25 +102,58 @@ public class ShoppingListController implements ShoppingListsApi {
     }
 
     @Override
-    public ResponseEntity<ShoppingList> createShoppingListFromRecipes(String userId, ShoppingListCreateFromRecipes newShoppingListRequest) {
+    public ResponseEntity<ShoppingList> createShoppingListFromRecipes(
+            String userId,
+            ShoppingListCreateFromRecipes newShoppingListRequest
+    ) {
 
         List<RecipeIdWithNumber> userRecipeArray = newShoppingListRequest.getUserRecipeArray();
-        List<RecipeIdWithNumber> publicRecipeArray = newShoppingListRequest.getPublicRecipeArray();
 
-        List<String> userRecipeIds = userRecipeArray.stream().map(
+        List<String> userRecipeIds = new ArrayList<>(userRecipeArray.stream().map(
                 RecipeIdWithNumber::getRecipeId
-        ).toList();
-
-        List<String> publicRecipeIds = publicRecipeArray.stream().map(
-                RecipeIdWithNumber::getRecipeId
-        ).toList();
+        ).toList());
 
         List<Recipe> userRecipes = recipeRepository.getSpecificRecipesForUser(userId, userRecipeIds);
+
+        Set<String> userRecipeIdsFromDB = new HashSet<>(
+                userRecipes.stream()
+                        .map(Recipe::getRecipeId)
+                        .toList()
+        );
+
+        if (!userRecipeIdsFromDB.containsAll(userRecipeIds)) {
+
+            userRecipeIds.removeAll(userRecipeIdsFromDB);
+
+            throw new NotFoundException(
+                    String.format("Recipes with ids: %s couldn't be found", userRecipeIds),
+                    Code.MANY_RECIPES_NOT_FOUND
+            );
+        }
+
+        List<RecipeIdWithNumber> publicRecipeArray = newShoppingListRequest.getPublicRecipeArray();
+
+        List<String> publicRecipeIds = new ArrayList<>(publicRecipeArray.stream().map(
+                RecipeIdWithNumber::getRecipeId
+        ).toList());
+
         List<Recipe> publicRecipes = recipeRepository.getSpecificPublicRecipes(publicRecipeIds);
 
-        // TODO
-        // 1) Throw an error if some recipe couldn't be found.
-        // 2 ) Move the code responsible for preparing Recipes to separate class
+        Set<String> publicRecipeIdsFromDB = new HashSet<>(
+                publicRecipes.stream()
+                        .map(Recipe::getRecipeId)
+                        .toList()
+        );
+
+        if (!publicRecipeIdsFromDB.containsAll(publicRecipeIds)) {
+
+            publicRecipeIds.removeAll(publicRecipeIdsFromDB);
+
+            throw new NotFoundException(
+                    String.format("Recipes with ids: %s couldn't be found", publicRecipeIds),
+                    Code.MANY_RECIPES_NOT_FOUND
+            );
+        }
 
         List<Recipe> allPreparedRecipes = shoppingListCreator.prepareRecipes(
           userRecipes, publicRecipes, userRecipeArray, publicRecipeArray
@@ -135,6 +169,7 @@ public class ShoppingListController implements ShoppingListsApi {
         // TODO:
         //  Handle situation when the shopping list metadata has not been created yet.
         //  It happens when user creates his first shopping list
+        //  NOTE: we are going to do that when customer is registering for the first time
 
         ShoppingListInfo shoppingListMetadata = new ShoppingListInfo(
                 newShoppingListName,
@@ -150,70 +185,72 @@ public class ShoppingListController implements ShoppingListsApi {
     @Override
     public ResponseEntity<ShoppingList> deleteShoppingList(String userId, String shoppingListId) {
 
-        // TODO
-        // 1) Add error message to body when 404 happens
-
         Optional<ShoppingList> shoppingListOptional =
                 shoppingListRepository.getUserShoppingListById(userId, shoppingListId);
 
-        if(shoppingListOptional.isEmpty())
-            return ResponseEntity.notFound().build();
+        if(shoppingListOptional.isEmpty()) {
+            throw new NotFoundException(
+                    String.format("Shopping list with ID %s couldn't be found", shoppingListId),
+                    Code.SHOPPING_LIST_NOT_FOUND
+            );
+        }
 
         shoppingListRepository.deleteShoppingListForUser(userId, shoppingListId);
 
         List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
-        Optional<ShoppingListInfo> deletedShoppingListMetadataOptional = shoppingListMetadataList.stream()
-                .filter(m -> m.getId().equals(shoppingListId))
-                .findAny();
 
-        deletedShoppingListMetadataOptional.ifPresent(shoppingListMetadataList::remove);
+        List<ShoppingListInfo> updatedShoppingListMetadataList = shoppingListMetadataList.stream().filter(
+                shoppingListInfo ->
+                        !shoppingListInfo.getId().equals(shoppingListOptional.get().getShoppingListId())
+        ).toList();
 
-        metadataRepository.saveShoppingListMetadata(userId, shoppingListMetadataList);
+        metadataRepository.saveShoppingListMetadata(userId, updatedShoppingListMetadataList);
 
         return ResponseEntity.ok(shoppingListOptional.get());
     }
 
     @Override
     public ResponseEntity<ShoppingList> updateShoppingList(
-            String userId, String shoppingListId, ShoppingListUpdate shoppingListBase
+            String userId, String shoppingListId, ShoppingListCreate shoppingListUpdate
     ) {
 
-        // TODO
-        // Check if the element already exists
-        // Do not update createdAt field - Reuse the value taken from DB
+        Optional<ShoppingList> shoppingListFromDB = shoppingListRepository.getUserShoppingListById(userId, shoppingListId);
+
+        if (shoppingListFromDB.isEmpty()) {
+            throw new NotFoundException(
+                    String.format("Shopping list with ID %s couldn't be found", shoppingListId),
+                    Code.SHOPPING_LIST_NOT_FOUND
+            );
+        }
 
         OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         ShoppingList shoppingList = new ShoppingList()
                 .shoppingListId(shoppingListId)
-                .name(shoppingListBase.getName())
+                .name(shoppingListUpdate.getName())
                 .updatedAt(currentDateTime)
-                .createdAt(currentDateTime)
-                .itemsPerCategory(shoppingListBase.getItemsPerCategory());
+                .createdAt(shoppingListFromDB.get().getCreatedAt())
+                .itemsPerCategory(shoppingListUpdate.getItemsPerCategory());
 
 
         shoppingListRepository.saveShoppingListForUser(userId, shoppingList);
 
-        List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
+        List<ShoppingListInfo> shoppingListMetadata = metadataRepository.getShoppingListMetadata(userId);
 
-        ShoppingListInfo updatedShoppingListMetadata = new ShoppingListInfo(
+        ShoppingListInfo updatedShoppingInfo = new ShoppingListInfo(
                 shoppingList.getName(),
-                shoppingList.getShoppingListId()
+                shoppingListId
         );
 
-        int index = 0;
-        for (int i = 0; i < shoppingListMetadataList.size(); i++) {
-
-            String metadataId = shoppingListMetadataList.get(i).getId();
-
-            if (metadataId.equals(shoppingListId)) {
-                index = i;
-                break;
+        List<ShoppingListInfo> updatedShoppingListMetadata = shoppingListMetadata.stream().map(metadata -> {
+            if(metadata.getId().equals(shoppingListId)) {
+                return updatedShoppingInfo;
+            } else {
+                return metadata;
             }
-        }
+        }).toList();
 
-        shoppingListMetadataList.add(index, updatedShoppingListMetadata);
-        metadataRepository.saveShoppingListMetadata(userId, shoppingListMetadataList);
+        metadataRepository.saveShoppingListMetadata(userId, updatedShoppingListMetadata);
 
         return ResponseEntity.ok(shoppingList);
     }

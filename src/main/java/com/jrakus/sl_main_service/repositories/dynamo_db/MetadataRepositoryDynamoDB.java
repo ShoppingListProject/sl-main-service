@@ -20,7 +20,8 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
     private final ShoppingListsMetadataMapper shoppingListMetadataMapper;
     private final RecipesMetadataMapper recipesMetadataMapper;
 
-    private final String pkPrefix = "USER#";
+    private final String pkUserPrefix = "USER#";
+
     private final String skShoppingList = "METADATA#SHOPPING_LISTS";
     private final String skRecipe = "METADATA#RECIPES";
 
@@ -37,7 +38,7 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
     @Override
     public List<ShoppingListInfo> getShoppingListMetadata(String userId) {
 
-        String pk = pkPrefix + userId;
+        String pk = pkUserPrefix + userId;
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, skShoppingList);
 
         return shoppingListMetadataMapper.fromDynamoDBItem(responseItem);
@@ -46,15 +47,26 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
     @Override
     public List<RecipeInfo> getRecipeMetadata(String userId) {
 
-        String pk = pkPrefix + userId;
+        String pk = pkUserPrefix + userId;
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, skRecipe);
 
         return recipesMetadataMapper.fromDynamoDBItem(responseItem);
     }
 
     @Override
+    public List<RecipeInfo> getGlobalRecipeMetadata() {
+
+        String pk = "GLOBAL#RECIPES";
+        String sk = "METADATA";
+
+        Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, sk);
+
+        return recipesMetadataMapper.fromDynamoDBItem(responseItem);
+    }
+
+    @Override
     public void saveShoppingListMetadata(String userId, List<ShoppingListInfo> shoppingListMetadataList) {
-        String pk = pkPrefix + userId;
+        String pk = pkUserPrefix + userId;
 
         Map<String, AttributeValue> dynamoDBItem = shoppingListMetadataMapper.toDynamoDBItem(
                 pk,
@@ -67,7 +79,7 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
 
     @Override
     public void saveRecipeMetadata(String userId, List<RecipeInfo> recipeMetadataList) {
-        String pk = pkPrefix + userId;
+        String pk = pkUserPrefix + userId;
 
         Map<String, AttributeValue> dynamoDBItem = recipesMetadataMapper.toDynamoDBItem(
                 pk,

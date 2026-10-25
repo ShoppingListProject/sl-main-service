@@ -89,6 +89,7 @@
                                 <openApiNullable>false</openApiNullable>
                                 <useTags>true</useTags>
                                 <skipDefaultInterface>true</skipDefaultInterface>
+								<useSpringBuiltInValidation>true</useSpringBuiltInValidation>
                             </configOptions>
                         </configuration>
                     </execution>

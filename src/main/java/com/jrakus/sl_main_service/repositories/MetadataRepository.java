@@ -8,6 +8,7 @@ import java.util.List;
 public interface MetadataRepository {
     List<ShoppingListInfo> getShoppingListMetadata(String userId);
     List<RecipeInfo> getRecipeMetadata(String userId);
+    List<RecipeInfo> getGlobalRecipeMetadata();
     void saveShoppingListMetadata(String userId, List<ShoppingListInfo> shoppingListMetadataList);
     void saveRecipeMetadata(String userId, List<RecipeInfo> recipeMetadataList);
 }

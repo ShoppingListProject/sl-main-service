@@ -121,7 +121,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/shoppingListUpdate"
+              $ref: "#/components/schemas/shoppingListCreate"
 
       responses:
 
@@ -209,6 +209,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/shoppingList"
+
+        "404":
+          $ref: "#/components/responses/notFound"
 
         "403":
           $ref: "#/components/responses/forbidden"
@@ -438,7 +441,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/recipeUpdate"
+              $ref: "#/components/schemas/recipeCreate"
       responses:
 
         "200":
@@ -571,7 +574,7 @@ components:
 
     shoppingList:
       allOf:
-        - $ref: "#/components/schemas/shoppingListUpdate"
+        - $ref: "#/components/schemas/shoppingListCreate"
         - type: object
           required:
             - updatedAt
@@ -580,24 +583,14 @@ components:
             - name
             - itemsPerCategory
           properties:
+            shoppingListId:
+              type: string
             updatedAt:
               type: string
               format: date-time
             createdAt:
               type: string
               format: date-time
-
-    shoppingListUpdate:
-      allOf:
-        - $ref: "#/components/schemas/shoppingListCreate"
-        - type: object
-          required:
-            - shoppingListId
-            - name
-            - itemsPerCategory
-          properties:
-            shoppingListId:
-              type: string
 
     shoppingListCreate:
       type: object
@@ -645,7 +638,7 @@ components:
 
     recipe:
       allOf:
-        - $ref: "#/components/schemas/recipeUpdate"
+        - $ref: "#/components/schemas/recipeCreate"
         - type: object
           required:
             - updatedAt
@@ -654,24 +647,14 @@ components:
             - name
             - items
           properties:
+            recipeId:
+              type: string
             updatedAt:
               type: string
               format: date-time
             createdAt:
               type: string
               format: date-time
-
-    recipeUpdate:
-      allOf:
-        - $ref: "#/components/schemas/recipeCreate"
-        - type: object
-          required:
-            - recipeId
-            - name
-            - items
-          properties:
-            recipeId:
-              type: string
 
     recipeCreate:
       type: object
@@ -770,11 +753,42 @@ components:
       required:
         - recipeName
         - id
+        - isGlobal
       properties:
         recipeName:
           type: string
         id:
           type: string
+        isGlobal:
+          type: boolean
+
+    errorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          type: string
+        params:
+          type: object
+          additionalProperties:
+            type: string
+
+    code:
+      type: string
+      enum:
+        - RECIPE_NOT_FOUND
+        - USER_NOT_FOUND
+        - SHOPPING_LIST_NOT_FOUND
+        - MANY_RECIPES_NOT_FOUND
+        - MANY_SHOPPING_LISTS_NOT_FOUND
+        - ACCESS_DENIED
+        - SHOPPING_LISTS_ALREADY_EXISTS
+        - RECIPE_ALREADY_EXISTS
+        - UNKNOWN
 
   responses:
     forbidden:
@@ -782,26 +796,19 @@ components:
       content:
         application/json:
           schema:
-            type: string
+            $ref: "#/components/schemas/errorResponse"
 
     notFound:
       description: "The requested resource could not be found"
       content:
         application/json:
           schema:
-            type: string
-
-    unauthenticated:
-      description: "The client is not authenticated."
-      content:
-        application/json:
-          schema:
-            type: string
+            $ref: "#/components/schemas/errorResponse"
 
     alreadyExists:
       description: "The resource already exists."
       content:
         application/json:
           schema:
-            type: string
+            $ref: "#/components/schemas/errorResponse"
 

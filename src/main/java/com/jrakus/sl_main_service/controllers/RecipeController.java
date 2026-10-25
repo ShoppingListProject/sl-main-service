@@ -24,38 +24,49 @@ public class RecipeController implements RecipesApi {
     @Override
     public ResponseEntity<List<Recipe>> getRecipesForUser(String userId, Integer offset, Integer limit, Boolean areGlobalRecipesIncluded, String querySearch) {
 
-        // TODO:
-        //  We could use recipeMetadata that stores info about all user recipes instead of getting all recipes
-        //  (it could be slightly faster). However we do not have metadata for Global recipes so probably we should add
-        //  it first.
-
-        List<Recipe> userRecipes = recipeRepository.getRecipesForUser(userId);
-        List<Recipe> allRecipes = new ArrayList<>(userRecipes);
+        List<RecipeInfo> userRecipesMetadata = metadataRepository.getRecipeMetadata(userId);
+        List<RecipeInfo> allRecipesMetadata = new ArrayList<>(userRecipesMetadata);
 
         if (areGlobalRecipesIncluded) {
-            List<Recipe> publicRecipes = recipeRepository.getAllPublicRecipes();
-            allRecipes.addAll(publicRecipes);
+            List<RecipeInfo> globalRecipesMetadata = metadataRepository.getGlobalRecipeMetadata();
+            allRecipesMetadata.addAll(globalRecipesMetadata);
         }
 
         if (querySearch != null) {
-            allRecipes = allRecipes.stream().filter(
-                    recipe -> recipe.getName().toLowerCase().contains(querySearch.toLowerCase())
+            allRecipesMetadata = allRecipesMetadata.stream().filter(
+                    recipe -> recipe.getRecipeName().toLowerCase().contains(querySearch.toLowerCase())
             ).toList();
         }
 
-        List<Recipe> recipesToReturn = new ArrayList<>();
+        List<RecipeInfo> recipesToReturnMetadata = new ArrayList<>();
 
-        for (int i = offset; i < offset + limit && i < allRecipes.size(); i++) {
-            recipesToReturn.add(
-                    allRecipes.get(i)
+        for (int i = offset; i < offset + limit && i < allRecipesMetadata.size(); i++) {
+            recipesToReturnMetadata.add(
+                    allRecipesMetadata.get(i)
             );
         }
+
+        List<String> userRecipeIds = recipesToReturnMetadata.stream()
+                .filter(metadata -> !metadata.getIsGlobal())
+                .map(RecipeInfo::getId)
+                .toList();
+
+        List<String> globalRecipeIds = recipesToReturnMetadata.stream()
+                .filter(RecipeInfo::getIsGlobal)
+                .map(RecipeInfo::getId)
+                .toList();
+
+        List<Recipe> userRecipesToReturn = recipeRepository.getSpecificRecipesForUser(userId, userRecipeIds);
+        List<Recipe> globalRecipesToReturn = recipeRepository.getSpecificPublicRecipes(globalRecipeIds);
+
+        List<Recipe> recipesToReturn = new ArrayList<>(userRecipesToReturn);
+        recipesToReturn.addAll(globalRecipesToReturn);
 
         return ResponseEntity.ok(recipesToReturn);
     }
 
     @Override
-    public ResponseEntity<Recipe> createRecipeForUser(String userId, RecipeCreate recipeBase) {
+    public ResponseEntity<Recipe> createRecipeForUser(String userId, RecipeCreate recipeCreate) {
 
         String newRecipeId = UUID.randomUUID().toString();
         OffsetDateTime currentDateTime = OffsetDateTime.now();
@@ -64,14 +75,15 @@ public class RecipeController implements RecipesApi {
                 .recipeId(newRecipeId)
                 .createdAt(currentDateTime)
                 .updatedAt(currentDateTime)
-                .name(recipeBase.getName())
-                .items(recipeBase.getItems());
+                .name(recipeCreate.getName())
+                .items(recipeCreate.getItems());
 
         List<RecipeInfo> recipeMetadata = metadataRepository.getRecipeMetadata(userId);
 
         RecipeInfo recipeInfo = new RecipeInfo()
-                .recipeName(recipeBase.getName())
-                .id(newRecipeId);
+                .recipeName(recipeCreate.getName())
+                .id(newRecipeId)
+                .isGlobal(false);
 
         recipeMetadata.add(recipeInfo);
 
@@ -83,9 +95,6 @@ public class RecipeController implements RecipesApi {
 
     @Override
     public ResponseEntity<Recipe> removeRecipeForUser(String userId, String recipeId) {
-
-        // TODO
-        // 1) Add error message to body when 404 happens
 
         Optional<Recipe> recipeOptional = recipeRepository.getUserRecipeById(userId, recipeId);
 
@@ -105,30 +114,39 @@ public class RecipeController implements RecipesApi {
     }
 
     @Override
-    public ResponseEntity<Recipe> updateRecipeForUser(String userId, String recipeId, RecipeUpdate recipeBase) {
+    public ResponseEntity<Recipe> updateRecipeForUser(String userId, String recipeId, RecipeCreate recipeUpdate) {
 
-        // TODO
-        // Check if the element already exists
-        // Do not update createAt - use the previous value taken from DB
+        Optional<Recipe> recipeFromDB = recipeRepository.getUserRecipeById(userId, recipeId);
+
+        if (recipeFromDB.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
         OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         Recipe recipe = new Recipe()
                 .recipeId(recipeId)
-                .name(recipeBase.getName())
+                .name(recipeUpdate.getName())
                 .updatedAt(currentDateTime)
-                .createdAt(currentDateTime)
-                .items(recipeBase.getItems());
+                .createdAt(recipeFromDB.get().getCreatedAt())
+                .items(recipeUpdate.getItems());
+
+        recipeRepository.saveRecipeForUser(userId, recipe);
 
         List<RecipeInfo> recipeMetadata = metadataRepository.getRecipeMetadata(userId);
 
-        RecipeInfo recipeInfo = new RecipeInfo()
-                .recipeName(recipeBase.getName())
-                .id(recipeId);
+        recipeMetadata = recipeMetadata.stream().map(metadata -> {
+            if(metadata.getId().equals(recipeId)) {
+                return new RecipeInfo(
+                        recipeId,
+                        recipeUpdate.getName(),
+                        recipeUpdate.getIsGlobal()
+                );
+            } else {
+                return metadata;
+            }
+        }).toList();
 
-        recipeMetadata.add(recipeInfo);
-
-        recipeRepository.saveRecipeForUser(userId, recipe);
         metadataRepository.saveRecipeMetadata(userId, recipeMetadata);
 
         return ResponseEntity.ok(recipe);
@@ -155,15 +173,15 @@ public class RecipeController implements RecipesApi {
         int numberOfGlobalRecipesToReturn = 0;
 
         if (areGlobalRecipesIncluded) {
-            List<Recipe> globalRecipes = recipeRepository.getAllPublicRecipes();
+            List<RecipeInfo> globalRecipeMetadataList = metadataRepository.getGlobalRecipeMetadata();
 
             if (querySearch != null) {
-                globalRecipes = globalRecipes.stream().filter(
-                        recipe -> recipe.getName().toLowerCase().contains(querySearch.toLowerCase())
+                globalRecipeMetadataList = globalRecipeMetadataList.stream().filter(
+                        metadata -> metadata.getRecipeName().toLowerCase().contains(querySearch.toLowerCase())
                 ).toList();
             }
 
-            numberOfGlobalRecipesToReturn = globalRecipes.size();
+            numberOfGlobalRecipesToReturn = globalRecipeMetadataList.size();
         }
 
         int numberOfPages =  Math.ceilDiv(recipeMetadataList.size() + numberOfGlobalRecipesToReturn, Integer.parseInt(itemsPerPage));

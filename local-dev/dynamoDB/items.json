@@ -287,6 +287,25 @@
       "PutRequest": {
         "Item": {
           "PK": {"S": "GLOBAL#RECIPES"},
+          "SK": {"S": "METADATA"},
+          "metadata": {
+            "L": [
+              {
+                "M": {
+                  "recipeName": {"S": "Spaghetti"},
+                  "id": {"S": "d5413c10-e69b-4841-92f3-7f1152194387"},
+                  "isGlobal": {"BOOL": true}
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "GLOBAL#RECIPES"},
           "SK": {"S": "RECIPE#d5413c10-e69b-4841-92f3-7f1152194387"},
           "createdAt": {"S":  "2025-09-27T15:16:05.951250500Z"},
           "updatedAt": {"S":  "2025-09-27T15:16:05.951250500Z"},
@@ -398,6 +417,17 @@
                 }
               }
             ]
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "USER#37d4d38e-e304-43ab-978d-da6b8495d7f6"},
+          "SK": {"S": "METADATA#RECIPES"},
+          "metadata": {
+            "L": []
           }
         }
       }
