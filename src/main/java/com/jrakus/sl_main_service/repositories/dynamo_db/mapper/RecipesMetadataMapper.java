@@ -31,8 +31,9 @@ public class RecipesMetadataMapper {
 
         String recipeName = item.get("recipeName").s();
         String id = item.get("id").s();
+        boolean isGlobal = item.get("isGlobal").bool();
 
-        return new RecipeInfo(recipeName, id);
+        return new RecipeInfo(recipeName, id, isGlobal);
     }
 
     // =======================
@@ -61,11 +62,13 @@ public class RecipesMetadataMapper {
 
         AttributeValue recipeName = AttributeValue.fromS(recipeMetadata.getRecipeName());
         AttributeValue id = AttributeValue.fromS(recipeMetadata.getId());
+        AttributeValue isGlobal = AttributeValue.fromBool(recipeMetadata.getIsGlobal());
 
         return AttributeValue.fromM(
                 Map.of(
                         "recipeName", recipeName,
-                        "id", id
+                        "id", id,
+                        "isGlobal", isGlobal
                 )
         );
     }

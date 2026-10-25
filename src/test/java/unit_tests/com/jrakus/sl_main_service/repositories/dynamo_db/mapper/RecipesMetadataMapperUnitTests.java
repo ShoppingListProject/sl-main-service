@@ -18,11 +18,11 @@ class RecipesMetadataMapperUnitTests {
     private static final String SK = "METADATA#RECIPES";
 
     private static final RecipeInfo SPAGHETTI =
-            new RecipeInfo("spaghetti", "1234");
+            new RecipeInfo("spaghetti", "1234", false);
     private static final RecipeInfo PIZZA =
-            new RecipeInfo("pizza", "1235");
+            new RecipeInfo("pizza", "1235", true);
     private static final RecipeInfo CHICKEN =
-            new RecipeInfo("chicken with rice", "1236");
+            new RecipeInfo("chicken with rice", "1236", false);
 
     private final RecipesMetadataMapper recipesMetadataMapper = new RecipesMetadataMapper();
 
@@ -82,7 +82,8 @@ class RecipesMetadataMapperUnitTests {
     private AttributeValue createRecipeInfoAsMap(RecipeInfo info) {
         return AttributeValue.fromM(Map.of(
                 "recipeName", AttributeValue.fromS(info.getRecipeName()),
-                "id", AttributeValue.fromS(info.getId())
+                "id", AttributeValue.fromS(info.getId()),
+                "isGlobal", AttributeValue.fromBool(info.getIsGlobal())
         ));
     }
 }
