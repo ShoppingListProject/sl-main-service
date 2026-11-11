@@ -4,6 +4,8 @@ import com.jrakus.sl_main_service.repositories.MetadataRepository;
 import com.jrakus.sl_main_service.repositories.RecipeRepository;
 import org.openapitools.api.RecipesApi;
 import org.openapitools.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,6 +14,8 @@ import java.util.*;
 
 @RestController
 public class RecipeController implements RecipesApi {
+
+    private static final Logger log = LoggerFactory.getLogger(RecipeController.class);
 
     private final RecipeRepository recipeRepository;
     private final MetadataRepository metadataRepository;
@@ -23,6 +27,9 @@ public class RecipeController implements RecipesApi {
 
     @Override
     public ResponseEntity<List<Recipe>> getRecipesForUser(String userId, Integer offset, Integer limit, Boolean areGlobalRecipesIncluded, String querySearch) {
+
+        log.debug("Fetching recipes for user {} (offset={}, limit={}, includeGlobal={}, query={})",
+                userId, offset, limit, areGlobalRecipesIncluded, querySearch);
 
         List<RecipeInfo> userRecipesMetadata = metadataRepository.getRecipeMetadata(userId);
         List<RecipeInfo> allRecipesMetadata = new ArrayList<>(userRecipesMetadata);
@@ -62,6 +69,8 @@ public class RecipeController implements RecipesApi {
         List<Recipe> recipesToReturn = new ArrayList<>(userRecipesToReturn);
         recipesToReturn.addAll(globalRecipesToReturn);
 
+        log.debug("Returning {} recipes for user {}", recipesToReturn.size(), userId);
+
         return ResponseEntity.ok(recipesToReturn);
     }
 
@@ -90,6 +99,8 @@ public class RecipeController implements RecipesApi {
         recipeRepository.saveRecipeForUser(userId, recipe);
         metadataRepository.saveRecipeMetadata(userId, recipeMetadata);
 
+        log.info("Created recipe {} for user {}", newRecipeId, userId);
+
         return ResponseEntity.status(201).body(recipe);
     }
 
@@ -109,6 +120,8 @@ public class RecipeController implements RecipesApi {
 
         recipeRepository.deleteRecipeForUser(userId, recipeId);
         metadataRepository.saveRecipeMetadata(userId, recipeMetadata);
+
+        log.info("Removed recipe {} for user {}", recipeId, userId);
 
         return ResponseEntity.ok(recipeOptional.get());
     }
@@ -149,6 +162,8 @@ public class RecipeController implements RecipesApi {
 
         metadataRepository.saveRecipeMetadata(userId, recipeMetadata);
 
+        log.info("Updated recipe {} for user {}", recipeId, userId);
+
         return ResponseEntity.ok(recipe);
     }
 
@@ -159,6 +174,9 @@ public class RecipeController implements RecipesApi {
             String querySearch,
             Boolean areGlobalRecipesIncluded
     ) {
+
+        log.debug("Fetching number of recipe pages for user {} (itemsPerPage={}, includeGlobal={}, query={})",
+                userId, itemsPerPage, areGlobalRecipesIncluded, querySearch);
 
         List<RecipeInfo> recipeMetadataList = metadataRepository.getRecipeMetadata(userId);
 

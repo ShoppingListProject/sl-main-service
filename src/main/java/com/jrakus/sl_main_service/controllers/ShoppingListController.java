@@ -8,6 +8,8 @@ import com.jrakus.sl_main_service.repositories.ShoppingListRepository;
 import org.openapitools.api.ShoppingListsApi;
 import org.openapitools.model.*;
 import org.openapitools.model.ShoppingList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 
 @RestController
 public class ShoppingListController implements ShoppingListsApi {
+
+    private static final Logger log = LoggerFactory.getLogger(ShoppingListController.class);
 
     private final ShoppingListRepository shoppingListRepository;
     private final RecipeRepository recipeRepository;
@@ -40,6 +44,9 @@ public class ShoppingListController implements ShoppingListsApi {
 
     @Override
     public ResponseEntity<List<ShoppingList>> getShoppingListsForUser(String userId, Integer offset, Integer limit, String querySearch) {
+
+        log.debug("Fetching shopping lists for user {} (offset={}, limit={}, query={})",
+                userId, offset, limit, querySearch);
 
         List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 
@@ -98,6 +105,8 @@ public class ShoppingListController implements ShoppingListsApi {
         shoppingListMetadataList.add(shoppingListMetadata);
         metadataRepository.saveShoppingListMetadata(userId, shoppingListMetadataList);
 
+        log.info("Created shopping list {} for user {}", newShoppingListId, userId);
+
         return ResponseEntity.status(201).body(shoppingList);
     }
 
@@ -106,6 +115,8 @@ public class ShoppingListController implements ShoppingListsApi {
             String userId,
             ShoppingListCreateFromRecipes newShoppingListRequest
     ) {
+
+        log.debug("Creating shopping list from recipes for user {}: {}", userId, newShoppingListRequest);
 
         List<RecipeIdWithNumber> userRecipeArray = newShoppingListRequest.getUserRecipeArray();
 
@@ -179,6 +190,8 @@ public class ShoppingListController implements ShoppingListsApi {
         shoppingListMetadataList.add(shoppingListMetadata);
         metadataRepository.saveShoppingListMetadata(userId, shoppingListMetadataList);
 
+        log.info("Created shopping list {} from recipes for user {}", shoppingList.getShoppingListId(), userId);
+
         return ResponseEntity.status(201).body(shoppingList);
     }
 
@@ -205,6 +218,8 @@ public class ShoppingListController implements ShoppingListsApi {
         ).toList();
 
         metadataRepository.saveShoppingListMetadata(userId, updatedShoppingListMetadataList);
+
+        log.info("Deleted shopping list {} for user {}", shoppingListId, userId);
 
         return ResponseEntity.ok(shoppingListOptional.get());
     }
@@ -252,11 +267,16 @@ public class ShoppingListController implements ShoppingListsApi {
 
         metadataRepository.saveShoppingListMetadata(userId, updatedShoppingListMetadata);
 
+        log.info("Updated shopping list {} for user {}", shoppingListId, userId);
+
         return ResponseEntity.ok(shoppingList);
     }
 
     @Override
     public ResponseEntity<NumberOfPages> getPagesForShoppingLists(String userId, String itemsPerPage, String querySearch) {
+
+        log.debug("Fetching number of shopping list pages for user {} (itemsPerPage={}, query={})",
+                userId, itemsPerPage, querySearch);
 
         List<ShoppingListInfo> shoppingListMetadataList = metadataRepository.getShoppingListMetadata(userId);
 

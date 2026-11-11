@@ -1,6 +1,8 @@
 package com.jrakus.sl_main_service.repositories.dynamo_db.utils;
 
 import com.jrakus.sl_main_service.properties.DynamoDBProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -12,6 +14,8 @@ import java.util.Map;
 
 @Component
 public class DynamoDBQueryHelper {
+
+    private static final Logger log = LoggerFactory.getLogger(DynamoDBQueryHelper.class);
 
     private final DynamoDbClient ddb;
     private final String tableName;
@@ -34,6 +38,8 @@ public class DynamoDBQueryHelper {
                 .keyConditionExpression(keyConditionExpression)
                 .expressionAttributeValues(expressionValues)
                 .build();
+
+        log.debug("DynamoDB query: PK={}, SK prefix={}", pk, skPrefix);
 
         return ddb.query(queryRequest).items();
     }
@@ -60,6 +66,8 @@ public class DynamoDBQueryHelper {
                 .requestItems(requestItems)
                 .build();
 
+        log.debug("DynamoDB batch get: PK={}, {} keys", pk, listOfSk.size());
+
         BatchGetItemResponse response = ddb.batchGetItem(request);
 
         return response.responses().get(tableName);
@@ -75,6 +83,8 @@ public class DynamoDBQueryHelper {
                 .key(key)
                 .build();
 
+        log.debug("DynamoDB get: PK={}, SK={}", pk, sk);
+
         return ddb.getItem(getRequest).item();
     }
 
@@ -89,6 +99,8 @@ public class DynamoDBQueryHelper {
                 .key(key)
                 .build();
 
+        log.debug("DynamoDB delete: PK={}, SK={}", pk, sk);
+
         ddb.deleteItem(request);
     }
 
@@ -98,6 +110,8 @@ public class DynamoDBQueryHelper {
                 .tableName(tableName)
                 .item(item)
                 .build();
+
+        log.debug("DynamoDB put: PK={}, SK={}", item.get("PK").s(), item.get("SK").s());
 
         ddb.putItem(putRequest);
     }

@@ -2,6 +2,11 @@ spring:
   application:
     name: sl-main-service
 
+logging:
+  level:
+    root: INFO
+    com.jrakus.sl_main_service: DEBUG
+
 springdoc:
   swagger-ui:
     url: /api/api.yaml
