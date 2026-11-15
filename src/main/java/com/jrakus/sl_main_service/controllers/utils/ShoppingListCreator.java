@@ -41,7 +41,7 @@ public class ShoppingListCreator {
         sortRecipeArrays(userRecipesMutableCopy, publicRecipesMutableCopy, userRecipeArrayMutableCopy, publicRecipeArrayMutableCopy);
 
         Map<Recipe, Integer> recipeToAmount = createMapFromRecipeToAmount(
-                userRecipes, publicRecipesMutableCopy, userRecipeArrayMutableCopy, publicRecipeArrayMutableCopy
+                userRecipesMutableCopy, publicRecipesMutableCopy, userRecipeArrayMutableCopy, publicRecipeArrayMutableCopy
         );
 
         return createRecipesWithCorrectAmountOfItems(recipeToAmount);
