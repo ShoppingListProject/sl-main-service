@@ -9,6 +9,7 @@ import org.openapitools.model.ShoppingListInfo;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,9 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
         String pk = pkUserPrefix + userId;
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, skShoppingList);
 
+        if(responseItem.isEmpty())
+            return new ArrayList<>();
+
         return shoppingListMetadataMapper.fromDynamoDBItem(responseItem);
     }
 
@@ -49,6 +53,9 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
 
         String pk = pkUserPrefix + userId;
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, skRecipe);
+
+        if(responseItem.isEmpty())
+            return new ArrayList<>();
 
         return recipesMetadataMapper.fromDynamoDBItem(responseItem);
     }
@@ -60,6 +67,9 @@ public class MetadataRepositoryDynamoDB implements MetadataRepository {
         String sk = "METADATA";
 
         Map<String, AttributeValue> responseItem = dynamoDBQueryHelper.getSingleItem(pk, sk);
+
+        if(responseItem.isEmpty())
+            return new ArrayList<>();
 
         return recipesMetadataMapper.fromDynamoDBItem(responseItem);
     }
