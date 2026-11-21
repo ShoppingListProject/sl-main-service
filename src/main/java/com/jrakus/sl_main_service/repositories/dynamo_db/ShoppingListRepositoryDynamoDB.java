@@ -30,6 +30,10 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
     @Override
     public List<ShoppingList> getShoppingListsForUser(String userId, List<String> shoppingListIds) {
 
+        if(shoppingListIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
         String pk = this.pkPrefix + userId;
         List<String> listOfSk = new ArrayList<>();
 
