@@ -273,7 +273,7 @@ public class ShoppingListController implements ShoppingListsApi {
     }
 
     @Override
-    public ResponseEntity<NumberOfPages> getPagesForShoppingLists(String userId, String itemsPerPage, String querySearch) {
+    public ResponseEntity<NumberOfPages> getPagesForShoppingLists(String userId, Integer itemsPerPage, String querySearch) {
 
         log.debug("Fetching number of shopping list pages for user {} (itemsPerPage={}, query={})",
                 userId, itemsPerPage, querySearch);
@@ -288,7 +288,7 @@ public class ShoppingListController implements ShoppingListsApi {
             ).toList();
         }
 
-        int numberOfPages =  Math.ceilDiv(shoppingListMetadataList.size(), Integer.parseInt(itemsPerPage));
+        int numberOfPages =  Math.ceilDiv(shoppingListMetadataList.size(), itemsPerPage);
         NumberOfPages numberOfPagesObject = new NumberOfPages(numberOfPages);
 
         return ResponseEntity.ok(numberOfPagesObject);

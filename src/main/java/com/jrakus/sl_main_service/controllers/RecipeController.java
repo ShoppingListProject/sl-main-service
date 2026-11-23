@@ -151,8 +151,8 @@ public class RecipeController implements RecipesApi {
         recipeMetadata = recipeMetadata.stream().map(metadata -> {
             if(metadata.getId().equals(recipeId)) {
                 return new RecipeInfo(
-                        recipeId,
                         recipeUpdate.getName(),
+                        recipeId,
                         recipeUpdate.getIsGlobal()
                 );
             } else {
@@ -170,7 +170,7 @@ public class RecipeController implements RecipesApi {
     @Override
     public ResponseEntity<NumberOfPages> getPagesForRecipes(
             String userId,
-            String itemsPerPage,
+            Integer itemsPerPage,
             String querySearch,
             Boolean areGlobalRecipesIncluded
     ) {
@@ -202,7 +202,7 @@ public class RecipeController implements RecipesApi {
             numberOfGlobalRecipesToReturn = globalRecipeMetadataList.size();
         }
 
-        int numberOfPages =  Math.ceilDiv(recipeMetadataList.size() + numberOfGlobalRecipesToReturn, Integer.parseInt(itemsPerPage));
+        int numberOfPages =  Math.ceilDiv(recipeMetadataList.size() + numberOfGlobalRecipesToReturn, itemsPerPage);
         NumberOfPages numberOfPagesObject = new NumberOfPages(numberOfPages);
 
         return ResponseEntity.ok(numberOfPagesObject);
