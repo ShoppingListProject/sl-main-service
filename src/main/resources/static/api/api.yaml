@@ -236,7 +236,8 @@ paths:
           in: query
           required: true
           schema:
-            type: string
+            type: integer
+            minimum: 1
           description: The number of items that the page will contain.
 
         - name: querySearch
@@ -474,7 +475,8 @@ paths:
           in: query
           required: true
           schema:
-            type: string
+            type: integer
+            minimum: 1
           description: The number of items that the page will contain.
 
         - name: querySearch
