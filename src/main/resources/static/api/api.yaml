@@ -173,6 +173,50 @@ paths:
         "404":
           $ref: "#/components/responses/notFound"
 
+  /api/v1/shoppingLists/{userId}/{shoppingListId}/items:
+    patch:
+      operationId: updateShoppingListItemPurchased
+      summary: Mark shopping list item as purchased or not purchased.
+      description: |
+        Set the purchased flag of a single item, identified by its position in the shopping list.
+        The position is not checked against the item that the client has seen, so if the list has been
+        changed in the meantime, the item that now occupies that position is updated.
+      tags:
+        - ShoppingLists
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+
+        - name: shoppingListId
+          in: path
+          required: true
+          description: The unique ID of the shopping list.
+          schema:
+            type: string
+
+      requestBody:
+        description: Position of the item and its new purchased flag
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/shoppingListItemPurchasedUpdate"
+
+      responses:
+
+        "204":
+          description: The item has been updated
+
+        "403":
+          $ref: "#/components/responses/forbidden"
+
+        "404":
+          $ref: "#/components/responses/notFound"
+
   /api/v1/shoppingLists/fromRecipes/{userId}:
     post:
       operationId: createShoppingListFromRecipes
@@ -638,6 +682,24 @@ components:
         purchased:
           type: boolean
 
+    shoppingListItemPurchasedUpdate:
+      type: object
+      required:
+        - categoryIndex
+        - itemIndex
+        - purchased
+      properties:
+        categoryIndex:
+          type: integer
+          minimum: 0
+          description: Index of the category in itemsPerCategory.
+        itemIndex:
+          type: integer
+          minimum: 0
+          description: Index of the item in the items of that category.
+        purchased:
+          type: boolean
+
     recipe:
       allOf:
         - $ref: "#/components/schemas/recipeCreate"
@@ -785,6 +847,7 @@ components:
         - RECIPE_NOT_FOUND
         - USER_NOT_FOUND
         - SHOPPING_LIST_NOT_FOUND
+        - SHOPPING_LIST_ITEM_NOT_FOUND
         - MANY_RECIPES_NOT_FOUND
         - MANY_SHOPPING_LISTS_NOT_FOUND
         - ACCESS_DENIED
