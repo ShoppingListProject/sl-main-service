@@ -207,6 +207,97 @@ class ShoppingListRepositoryDynamoDBIntegrationTests extends DynamoDBIntegration
         assertDoesNotThrow(() -> shoppingListRepository.deleteShoppingListForUser(USER_ID, "missing"));
     }
 
+    // =============================
+    // ===== UPDATE PURCHASED ======
+    // =============================
+
+    @Test
+    void shouldSetPurchasedFlagOnlyOnGivenItemAndUpdateTimestamp() {
+
+        // given
+        shoppingListRepository.saveShoppingListForUser(USER_ID, createShoppingList("1", "weekend"));
+        OffsetDateTime updatedAt = OffsetDateTime.parse("2026-11-28T10:00:00.000000000Z");
+
+        // when
+        boolean updated = shoppingListRepository.updateItemPurchasedForUser(USER_ID, "1", 0, 0, true, updatedAt);
+
+        // then
+        ShoppingList expected = createShoppingList("1", "weekend").updatedAt(updatedAt);
+        expected.getItemsPerCategory().get(0).getItems().get(0).setPurchased(true);
+
+        assertTrue(updated);
+        assertEquals(Optional.of(expected), shoppingListRepository.getUserShoppingListById(USER_ID, "1"));
+    }
+
+    @Test
+    void shouldUnsetPurchasedFlag() {
+
+        // given
+        shoppingListRepository.saveShoppingListForUser(USER_ID, createShoppingList("1", "weekend"));
+
+        // when
+        boolean updated = shoppingListRepository.updateItemPurchasedForUser(
+                USER_ID, "1", 1, 0, false, OffsetDateTime.now()
+        );
+
+        // then
+        assertTrue(updated);
+        assertFalse(shoppingListRepository.getUserShoppingListById(USER_ID, "1").orElseThrow()
+                .getItemsPerCategory().get(1).getItems().get(0).getPurchased());
+    }
+
+    @Test
+    void shouldNotCreateShoppingListWhenUpdatingMissingOne() {
+
+        // when
+        boolean updated = shoppingListRepository.updateItemPurchasedForUser(
+                USER_ID, "missing", 0, 0, true, OffsetDateTime.now()
+        );
+
+        // then
+        assertFalse(updated);
+        assertTrue(shoppingListRepository.getUserShoppingListById(USER_ID, "missing").isEmpty());
+    }
+
+    @Test
+    void shouldNotUpdateWhenCategoryOrItemPositionDoesNotExist() {
+
+        // given
+        ShoppingList shoppingList = createShoppingList("1", "weekend");
+        shoppingListRepository.saveShoppingListForUser(USER_ID, shoppingList);
+
+        // when
+        boolean missingCategory = shoppingListRepository.updateItemPurchasedForUser(
+                USER_ID, "1", 2, 0, true, OffsetDateTime.now()
+        );
+        boolean missingItem = shoppingListRepository.updateItemPurchasedForUser(
+                USER_ID, "1", 0, 1, true, OffsetDateTime.now()
+        );
+
+        // then
+        assertFalse(missingCategory);
+        assertFalse(missingItem);
+        assertEquals(Optional.of(shoppingList), shoppingListRepository.getUserShoppingListById(USER_ID, "1"));
+    }
+
+    @Test
+    void shouldNotUpdateShoppingListOfOtherUser() {
+
+        // given
+        ShoppingList shoppingList = createShoppingList("1", "weekend");
+        shoppingListRepository.saveShoppingListForUser(OTHER_USER_ID, shoppingList);
+
+        // when
+        boolean updated = shoppingListRepository.updateItemPurchasedForUser(
+                USER_ID, "1", 0, 0, true, OffsetDateTime.now()
+        );
+
+        // then
+        assertFalse(updated);
+        assertEquals(Optional.of(shoppingList), shoppingListRepository.getUserShoppingListById(OTHER_USER_ID, "1"));
+        assertTrue(shoppingListRepository.getUserShoppingListById(USER_ID, "1").isEmpty());
+    }
+
     // ===================
     // ===== HELPERS =====
     // ===================
