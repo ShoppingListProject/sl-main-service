@@ -115,4 +115,40 @@ public class DynamoDBQueryHelper {
 
         ddb.putItem(putRequest);
     }
+
+    /**
+     * Applies the update expression to an existing item.
+     * Returns false when the condition is not met and nothing has been updated.
+     */
+    public boolean updateSingleItem(
+            String pk,
+            String sk,
+            String updateExpression,
+            String conditionExpression,
+            Map<String, String> expressionNames,
+            Map<String, AttributeValue> expressionValues
+    ) {
+
+        Map<String, AttributeValue> key = new HashMap<>();
+        key.put("PK", AttributeValue.builder().s(pk).build());
+        key.put("SK", AttributeValue.builder().s(sk).build());
+
+        UpdateItemRequest updateRequest = UpdateItemRequest.builder()
+                .tableName(tableName)
+                .key(key)
+                .updateExpression(updateExpression)
+                .conditionExpression(conditionExpression)
+                .expressionAttributeNames(expressionNames)
+                .expressionAttributeValues(expressionValues)
+                .build();
+
+        log.debug("DynamoDB update: PK={}, SK={}, expression={}", pk, sk, updateExpression);
+
+        try {
+            ddb.updateItem(updateRequest);
+            return true;
+        } catch (ConditionalCheckFailedException e) {
+            return false;
+        }
+    }
 }

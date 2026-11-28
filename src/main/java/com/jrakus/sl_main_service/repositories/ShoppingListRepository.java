@@ -15,4 +15,17 @@ public interface ShoppingListRepository {
     void saveShoppingListForUser(String userId, ShoppingList shoppingList);
 
     void deleteShoppingListForUser(String userId, String shoppingListId);
+
+    /**
+     * Sets the purchased flag of the item at the given position.
+     * Returns false when the shopping list or the item position doesn't exist.
+     */
+    boolean updateItemPurchasedForUser(
+            String userId,
+            String shoppingListId,
+            int categoryIndex,
+            int itemIndex,
+            boolean purchased,
+            OffsetDateTime updatedAt
+    );
 }

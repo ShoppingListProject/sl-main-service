@@ -5,10 +5,13 @@ import com.jrakus.sl_main_service.repositories.dynamo_db.mapper.ShoppingListMapp
 import com.jrakus.sl_main_service.repositories.dynamo_db.utils.DynamoDBQueryHelper;
 import org.openapitools.model.ShoppingList;
 import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -84,5 +87,36 @@ public class ShoppingListRepositoryDynamoDB implements ShoppingListRepository {
         String sk = this.skPrefix + shoppingListId;
 
         dynamoDBQueryHelper.deleteSingleItem(pk, sk);
+    }
+
+    @Override
+    public boolean updateItemPurchasedForUser(
+            String userId,
+            String shoppingListId,
+            int categoryIndex,
+            int itemIndex,
+            boolean purchased,
+            OffsetDateTime updatedAt
+    ) {
+        String pk = this.pkPrefix + userId;
+        String sk = this.skPrefix + shoppingListId;
+
+        // indexes are validated integers, so they can be safely placed directly in the document path
+        // ("items" is a DynamoDB reserved word, so it has to be referenced through a placeholder)
+        String itemPath = String.format("itemsPerCategory[%d].#items[%d]", categoryIndex, itemIndex);
+
+        // the condition fails both when the shopping list doesn't exist and when the position is out of range,
+        // so the update never creates a new item and never touches an invalid document path
+        return dynamoDBQueryHelper.updateSingleItem(
+                pk,
+                sk,
+                "SET " + itemPath + ".purchased = :purchased, updatedAt = :updatedAt",
+                "attribute_exists(" + itemPath + ")",
+                Map.of("#items", "items"),
+                Map.of(
+                        ":purchased", AttributeValue.fromBool(purchased),
+                        ":updatedAt", AttributeValue.fromS(updatedAt.toString())
+                )
+        );
     }
 }

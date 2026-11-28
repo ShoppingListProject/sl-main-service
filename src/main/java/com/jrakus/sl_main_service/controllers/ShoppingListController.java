@@ -273,6 +273,46 @@ public class ShoppingListController implements ShoppingListsApi {
     }
 
     @Override
+    public ResponseEntity<Void> updateShoppingListItemPurchased(
+            String userId, String shoppingListId, ShoppingListItemPurchasedUpdate itemUpdate
+    ) {
+
+        boolean updated = shoppingListRepository.updateItemPurchasedForUser(
+                userId,
+                shoppingListId,
+                itemUpdate.getCategoryIndex(),
+                itemUpdate.getItemIndex(),
+                itemUpdate.getPurchased(),
+                OffsetDateTime.now()
+        );
+
+        if (!updated) {
+
+            // the update failed, read the list only now to tell the client which part is missing
+            if (shoppingListRepository.getUserShoppingListById(userId, shoppingListId).isEmpty()) {
+                throw new NotFoundException(
+                        String.format("Shopping list with ID %s couldn't be found", shoppingListId),
+                        Code.SHOPPING_LIST_NOT_FOUND
+                );
+            }
+
+            throw new NotFoundException(
+                    String.format(
+                            "Shopping list with ID %s has no item at category index %d and item index %d",
+                            shoppingListId, itemUpdate.getCategoryIndex(), itemUpdate.getItemIndex()
+                    ),
+                    Code.SHOPPING_LIST_ITEM_NOT_FOUND
+            );
+        }
+
+        log.debug("Set purchased={} for item [{}][{}] of shopping list {} for user {}",
+                itemUpdate.getPurchased(), itemUpdate.getCategoryIndex(), itemUpdate.getItemIndex(),
+                shoppingListId, userId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
     public ResponseEntity<NumberOfPages> getPagesForShoppingLists(String userId, Integer itemsPerPage, String querySearch) {
 
         log.debug("Fetching number of shopping list pages for user {} (itemsPerPage={}, query={})",
