@@ -83,6 +83,10 @@ public abstract class ApiIntegrationTestBase {
         return rest.exchange("/api/v1" + path, HttpMethod.PUT, new HttpEntity<>(body), responseType);
     }
 
+    protected <T> ResponseEntity<T> patch(String path, Object body, Class<T> responseType) {
+        return rest.exchange("/api/v1" + path, HttpMethod.PATCH, new HttpEntity<>(body), responseType);
+    }
+
     protected <T> ResponseEntity<T> delete(String path, Class<T> responseType) {
         return rest.exchange("/api/v1" + path, HttpMethod.DELETE, null, responseType);
     }
@@ -121,6 +125,10 @@ public abstract class ApiIntegrationTestBase {
 
     protected static ShoppingListItem listItem(String name, float quantity, String unit, boolean purchased) {
         return new ShoppingListItem(name, quantity, unit, purchased);
+    }
+
+    protected static ShoppingListItemPurchasedUpdate purchasedUpdate(int categoryIndex, int itemIndex, boolean purchased) {
+        return new ShoppingListItemPurchasedUpdate(categoryIndex, itemIndex, purchased);
     }
 
     // =========================

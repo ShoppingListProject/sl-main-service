@@ -96,6 +96,92 @@ class ShoppingListsApiIntegrationTests extends ApiIntegrationTestBase {
     }
 
     // ======================
+    // ===== PURCHASED ======
+    // ======================
+
+    @Test
+    void shouldMarkItemAsPurchased() {
+
+        // given
+        ShoppingList created = createShoppingList(USER_ID, shoppingListCreate(
+                "weekend", category("Dairy", listItem("milk", 2f, "l", false))
+        ));
+
+        // when
+        ResponseEntity<Void> response = patch(
+                "/shoppingLists/" + USER_ID + "/" + created.getShoppingListId() + "/items",
+                purchasedUpdate(0, 0, true),
+                Void.class
+        );
+
+        // then
+        assertEquals(204, response.getStatusCode().value());
+
+        ShoppingList stored = get("/shoppingLists/" + USER_ID, SHOPPING_LIST_LIST).getBody().get(0);
+        assertTrue(stored.getItemsPerCategory().get(0).getItems().get(0).getPurchased());
+        assertTrue(stored.getUpdatedAt().isAfter(created.getUpdatedAt()));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenMarkingItemOnUnknownShoppingList() {
+
+        // when
+        ResponseEntity<ErrorResponse> response = patch(
+                "/shoppingLists/" + USER_ID + "/unknown/items", purchasedUpdate(0, 0, true), ErrorResponse.class
+        );
+
+        // then
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals(Code.SHOPPING_LIST_NOT_FOUND, response.getBody().getCode());
+        assertTrue(get("/shoppingLists/" + USER_ID, SHOPPING_LIST_LIST).getBody().isEmpty());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenItemPositionNoLongerExists() {
+
+        // given
+        ShoppingList created = createShoppingList(USER_ID, shoppingListCreate(
+                "weekend",
+                category("Dairy", listItem("milk", 2f, "l", false)),
+                category("Meat", listItem("pork", 1f, "kg", false))
+        ));
+
+        // client replaces the items, so the category seen before is gone
+        put(
+                "/shoppingLists/" + USER_ID + "/" + created.getShoppingListId(),
+                shoppingListCreate("weekend", category("Dairy", listItem("milk", 2f, "l", false))),
+                ShoppingList.class
+        );
+
+        // when
+        ResponseEntity<ErrorResponse> response = patch(
+                "/shoppingLists/" + USER_ID + "/" + created.getShoppingListId() + "/items",
+                purchasedUpdate(1, 0, true),
+                ErrorResponse.class
+        );
+
+        // then
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals(Code.SHOPPING_LIST_ITEM_NOT_FOUND, response.getBody().getCode());
+    }
+
+    @Test
+    void shouldRejectInvalidPurchasedUpdate() {
+
+        // given
+        ShoppingList created = createShoppingList(USER_ID, shoppingListCreate(
+                "weekend", category("Dairy", listItem("milk", 2f, "l", false))
+        ));
+        String path = "/shoppingLists/" + USER_ID + "/" + created.getShoppingListId() + "/items";
+
+        // when / then
+        assertEquals(400, patch(path, purchasedUpdate(-1, 0, true), String.class).getStatusCode().value());
+        assertEquals(400, patch(path, purchasedUpdate(0, -1, true), String.class).getStatusCode().value());
+        assertEquals(400, patch(path, java.util.Map.of("categoryIndex", 0, "itemIndex", 0), String.class)
+                .getStatusCode().value());
+    }
+
+    // ======================
     // ===== DELETE =========
     // ======================
 
